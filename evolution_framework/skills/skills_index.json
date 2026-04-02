@@ -1,0 +1,65 @@
+﻿{
+  "skills": [
+    {
+      "name": "simplify",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\simplify",
+      "created_at": "2026-04-02T15:49:28.314367",
+      "version": "v1.0"
+    },
+    {
+      "name": "research",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\research",
+      "created_at": "2026-04-02T15:49:28.318302",
+      "version": "v1.0"
+    },
+    {
+      "name": "remember",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\remember",
+      "created_at": "2026-04-02T15:49:28.326646",
+      "version": "v1.0"
+    },
+    {
+      "name": "dream",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\dream",
+      "created_at": "2026-04-02T15:49:28.337169",
+      "version": "v1.0"
+    },
+    {
+      "name": "monitor",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\monitor",
+      "created_at": "2026-04-02T15:49:28.346535",
+      "version": "v1.0"
+    },
+    {
+      "name": "evolve",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\evolve",
+      "created_at": "2026-04-02T15:49:28.354338",
+      "version": "v1.0"
+    },
+    {
+      "name": "quant_screen",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\quant_screen",
+      "created_at": "2026-04-02T15:49:28.365863",
+      "version": "v1.0"
+    },
+    {
+      "name": "team_analyze",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\team_analyze",
+      "created_at": "2026-04-02T15:49:28.376176",
+      "version": "v1.0"
+    },
+    {
+      "name": "extract_memories",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\extract_memories",
+      "created_at": "2026-04-02T15:49:28.386242",
+      "version": "v1.0"
+    },
+    {
+      "name": "status_report",
+      "path": "C:\\Users\\steve\\.openclaw\\workspace\\evolution_framework\\skills\\status_report",
+      "created_at": "2026-04-02T15:49:28.395142",
+      "version": "v1.0"
+    }
+  ],
+  "last_updated": "2026-04-02T15:49:28.395142"
+}

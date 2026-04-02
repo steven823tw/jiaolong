@@ -1,0 +1,20 @@
+{
+  "name": "jiaolong",
+  "version": "4.1.0",
+  "displayName": "jiaolong AI助手框架",
+  "description": "让 AI 助手拥有记忆、自动化和自我进化能力",
+  "author": "steven823tw",
+  "homepage": "https://github.com/steven823tw/jiaolong",
+  "repository": "https://github.com/steven823tw/jiaolong",
+  "keywords": ["openclaw", "ai-assistant", "memory", "automation", "evolution"],
+  "license": "MIT",
+  "openclaw": {
+    "extensions": ["evolution_framework"],
+    "compat": {
+      "pluginApi": "1.0"
+    },
+    "build": {
+      "openclawVersion": ">=1.0.0"
+    }
+  }
+}

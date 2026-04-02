@@ -1,0 +1,16 @@
+﻿{
+  "timestamp": "2026-04-02T13:57:02.281095",
+  "experiment": "EXP-20260402-002",
+  "new_metrics": {
+    "new_fact_coverage": 12,
+    "category_balance": 0.125,
+    "fact_lifespan": 2.91,
+    "context_recall": 1.0
+  },
+  "observations": {
+    "new_fact_coverage_note": "过去24h创建的事实数（EXP-20260402-001添加了12条）",
+    "category_balance_note": "衡量各category均衡度，避免preference类过少",
+    "fact_lifespan_note": "理想范围7-14天，过短=频繁换出，过长=占用热层",
+    "context_recall_note": "有accessCount>0的事实占比"
+  }
+}

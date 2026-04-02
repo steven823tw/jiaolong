@@ -1,0 +1,116 @@
+﻿{
+  "name": "jiaolong进化框架",
+  "version": "v4.1.0",
+  "date": "2026-04-02",
+  "description": "jiaolongAI助手第四次大进化 - 全面升级版",
+  "modules": {
+    "core": {
+      "version": "1.0",
+      "files": [
+        "evolution.py",
+        "prepare.py"
+      ]
+    },
+    "integration": {
+      "version": "1.1",
+      "files": [
+        "openclaw_integration.py"
+      ]
+    },
+    "skills_trigger": {
+      "version": "1.0",
+      "files": [
+        "skill_trigger.py"
+      ]
+    },
+    "memory_recall": {
+      "version": "1.0",
+      "files": [
+        "memory_recall.py"
+      ]
+    },
+    "parallel_executor": {
+      "version": "2.0",
+      "files": [
+        "parallel_executor.py"
+      ]
+    },
+    "rules_engine": {
+      "version": "2.0",
+      "files": [
+        "rules_engine.py"
+      ],
+      "note": "整合clean-code-review标准"
+    },
+    "jarvis_cli": {
+      "version": "1.0",
+      "files": [
+        "jarvis_cli.py"
+      ]
+    },
+    "jarvis_daemon": {
+      "version": "1.0",
+      "files": [
+        "jarvis_daemon.py"
+      ]
+    },
+    "skill_output": {
+      "version": "1.0",
+      "files": [
+        "skill_output.py"
+      ]
+    },
+    "llm_core": {
+      "version": "1.0",
+      "files": [
+        "llm_core.py"
+      ]
+    },
+    "context_compressor": {
+      "version": "1.0",
+      "files": [
+        "context_compressor.py"
+      ]
+    },
+    "task_decomposer": {
+      "version": "1.0",
+      "files": [
+        "task_decomposer.py"
+      ]
+    },
+    "memory_evolution": {
+      "version": "1.0",
+      "files": [
+        "memory_evolution.py"
+      ]
+    }
+  },
+  "skills": {
+    "count": 13,
+    "version": "2.0",
+    "note": "recall v2增强, remember/monitor有实际逻辑"
+  },
+  "hooks": {
+    "count": 2,
+    "files": [
+      "hooks/jiaolong-memory/handler.ts",
+      "hooks/jiaolong-skill-trigger/handler.ts"
+    ]
+  },
+  "services": {
+    "compact": "services/compact.py",
+    "daemon": "services/daemon.py"
+  },
+  "test_status": {
+    "syntax_check": "PASS (19/19 files)",
+    "import_check": "PASS (30/30 modules)",
+    "functional_check": "PASS (15/15 tests)",
+    "integration_check": "PASS (13/13 checks)",
+    "comprehensive_test": "PASS (20/20 tests)",
+    "date": "2026-04-02"
+  },
+  "dependencies": {
+    "python": ">=3.8",
+    "openclaw": ">=1.0"
+  }
+}
