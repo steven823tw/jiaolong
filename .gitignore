@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+daemon/*.pid
+daemon/*.log
+.env
+node_modules/
+*.tgz
