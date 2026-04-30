@@ -49,7 +49,7 @@ class JiaolongIntegration:
         self.rules_engine = RulesEngine()
         self._recall_enabled = True
         self._skill_trigger_enabled = True
-        self._rules_enabled = False  # 默认关闭（太早会影响开发速度）
+        self._rules_enabled = True   # 已启用（太早会影响开发速度）
 
     # ─────────────────────────────────────────────────────────────────────────
     # 记忆召回
