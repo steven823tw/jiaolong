@@ -1,10 +1,10 @@
 {
-  "schema": "openclaw.plugin@1",
+  "schema": "cowork.plugin@1",
   "id": "jiaolong-framework",
   "name": "jiaolong",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "蛟龙AI助手框架 - 记忆召回/ Skills自动触发/ 并行执行/ clean-code规则/ LLM能力层",
-  "entry": "evolution_framework/openclaw_integration.py",
+  "entry": "evolution_framework/cowork_integration.py",
   "author": "steven823tw",
   "license": "MIT",
   "homepage": "https://github.com/steven823tw/jiaolong"

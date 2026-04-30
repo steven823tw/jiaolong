@@ -14,7 +14,7 @@
     "integration": {
       "version": "1.1",
       "files": [
-        "openclaw_integration.py"
+        "cowork_integration.py"
       ]
     },
     "skills_trigger": {
@@ -111,6 +111,6 @@
   },
   "dependencies": {
     "python": ">=3.8",
-    "openclaw": ">=1.0"
+    "cowork": ">=5.0"
   }
 }

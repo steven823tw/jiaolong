@@ -8,7 +8,7 @@ jiaolong记忆召回 - Hook入口
 from __future__ import annotations
 import sys, json, os, re
 
-sys.path.insert(0, r'C:\Users\steve\.openclaw\workspace\evolution_framework')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 外部可配置的路径（兼容OpenClaw workspace hooks调用）
@@ -18,7 +18,7 @@ def get_workspace() -> str:
     """获取workspace路径"""
     return os.environ.get(
         "JIAOLONG_WORKSPACE",
-        r"C:\Users\steve\.openclaw\workspace"
+        str(Path.home() / ".claude" / "jiaolong")
     )
 
 

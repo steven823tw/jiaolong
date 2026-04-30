@@ -12,7 +12,8 @@ from typing import Any, Dict, List, Optional
 from .tool_spec import ToolSpec, ToolResult, PermissionModel
 
 
-WORKSPACE = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 MEMORY_DIR = WORKSPACE / "memory"
 HOT_FILE = MEMORY_DIR / "memory_hot.json"
 

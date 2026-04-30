@@ -1,9 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
 """
-jiaolong AI 助手框架 - 入口 Skill
+jiaolong AI 助手框架 - 入口 Skill (Cowork 适配版)
 
-> 版本: v4.1.0 | 2026-04-02
+> 版本: v5.0.0 | 2026-04-30
 > 功能: jiaolong框架的元入口，提供状态查询和引导
+> 适配: Claude Code Cowork 模式
 """
 from __future__ import annotations
 from typing import Any, Dict
@@ -39,7 +40,7 @@ def _status() -> Dict[str, Any]:
         from pathlib import Path
 
         sys.path.insert(0, str(Path(__file__).parent.parent))
-        from openclaw_integration import jiaolong
+        from cowork_integration import jiaolong
 
         s = jiaolong.status()
         hot_file = Path(__file__).parent.parent.parent / "memory" / "memory_hot.json"
@@ -75,9 +76,9 @@ def _status() -> Dict[str, Any]:
 def _info() -> Dict[str, Any]:
     """框架信息"""
     output = """
-## jiaolong AI 助手框架 v4.1.0
+## jiaolong AI 助手框架 v5.0.0 (Cowork Edition)
 
-**定位**: OpenClaw 的能力放大器
+**定位**: Claude Code Cowork 的能力放大器
 
 ### 8 大核心能力
 1. 🧠 语义记忆召回 — 每次对话自动注入相关历史
@@ -89,12 +90,16 @@ def _info() -> Dict[str, Any]:
 7. ⏰ Daemon守护 — 定时调度+进程管理
 8. 🧩 任务智能分解 — 复杂任务自动拆解
 
-### 安装
+### 安装 (Cowork)
 ```bash
-# 1. 复制 evolution_framework 到 OpenClaw workspace
-# 2. 配置 openclaw.json 启用 Hooks
-# 3. python evolution_framework/jarvis_cli.py status
+# 1. 运行部署脚本: bash deploy-jiaolong-cowork.sh
+# 2. 或手动: python ~/.claude/jiaolong/evolution_framework/jarvis_cli.py status
 ```
+
+### 路径
+- 工作区: ~/.claude/jiaolong/
+- 记忆: ~/.claude/jiaolong/memory/
+- Skills: ~/.claude/jiaolong/evolution_framework/skills/
 
 ### 文档
 - SKILL.md (本文件) — 概览
@@ -106,7 +111,7 @@ def _info() -> Dict[str, Any]:
 def _modules() -> Dict[str, Any]:
     """核心模块列表"""
     modules = [
-        ("openclaw_integration", "v1.1", "集成核心，统一接口"),
+        ("cowork_integration", "v5.0", "Cowork集成核心，统一接口"),
         ("skill_trigger", "v1.0", "Skills自动触发引擎"),
         ("memory_recall", "v1.0", "语义记忆召回"),
         ("parallel_executor", "v2.0", "任务依赖链并行"),

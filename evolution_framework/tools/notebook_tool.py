@@ -261,7 +261,7 @@ if __name__ == "__main__":
     print("=== NotebookEditTool 验证 ===")
     tool = NotebookEditTool()
     
-    test_path = r"C:\Users\steve\.openclaw\workspace\test_notebook.ipynb"
+    test_path = str(Path.home() / ".claude" / "jiaolong" / "test_notebook.ipynb")
     
     # 创建新notebook
     r1 = tool.execute(action="add_cell", path=test_path,

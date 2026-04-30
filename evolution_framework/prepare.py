@@ -26,7 +26,8 @@ from typing import Dict, List, Any, Optional
 # ─────────────────────────────────────────────────────────────────────────────
 # 路径配置（固定）
 # ─────────────────────────────────────────────────────────────────────────────
-WORKSPACE     = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 MEMORY_DIR    = WORKSPACE / "memory"
 SKILLS_DIR    = WORKSPACE / "skills"
 MEMORY_HOT    = MEMORY_DIR / "memory_hot.json"

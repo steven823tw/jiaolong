@@ -13,7 +13,7 @@ recall Skill - 记忆召回（增强版）
 from __future__ import annotations
 import sys, re
 from datetime import datetime, timedelta
-sys.path.insert(0, r'C:\Users\steve\.openclaw\workspace\evolution_framework')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from memory_recall import MemoryRetriever
 
@@ -277,7 +277,7 @@ def _scan_by_category(category: str) -> list:
     import json
     from pathlib import Path
 
-    hot_file = Path(r"C:\Users\steve\.openclaw\workspace\memory\memory_hot.json")
+    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
     if not hot_file.exists():
         return []
 
@@ -294,7 +294,7 @@ def _scan_by_category_all() -> list:
     import json
     from pathlib import Path
 
-    hot_file = Path(r"C:\Users\steve\.openclaw\workspace\memory\memory_hot.json")
+    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
     if not hot_file.exists():
         return []
 

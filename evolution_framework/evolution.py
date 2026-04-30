@@ -30,7 +30,8 @@ from enum import Enum
 # ─────────────────────────────────────────────────────────────────────────────
 # 路径配置
 # ─────────────────────────────────────────────────────────────────────────────
-WORKSPACE      = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 EVOLUTION_DIR  = WORKSPACE / "evolution_framework"
 EXPERIMENTS   = EVOLUTION_DIR / "experiments"
 MEMORY_DIR    = WORKSPACE / "memory"

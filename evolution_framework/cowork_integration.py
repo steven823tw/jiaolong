@@ -1,19 +1,21 @@
 ﻿# -*- coding: utf-8 -*-
 """
-jiaolong × OpenClaw 集成核心
-> 版本: v1.1 | 2026-04-02
+jiaolong × Claude Code Cowork 集成核心
+> 版本: v5.0.0 | 2026-04-30
 > 功能:
 >   1. 记忆召回注入（每次对话前自动召回相关记忆）
 >   2. Skills自动触发（监听消息，自动执行Skills）
 >   3. jiaolong角色并行执行（整合parallel_executor）
 >   4. 代码规则检查（每次写代码前自动检查）
+>   5. Claude Code hooks 集成（自动记忆注入）
 """
 from __future__ import annotations
 import json, sys, re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-WORKSPACE = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 SYS_PROMPT_FILE = WORKSPACE / "AGENTS.md"
 
 
@@ -35,7 +37,7 @@ from rules_engine import RulesEngine, check_rules
 
 class JiaolongIntegration:
     """
-    jiaolong × OpenClaw 集成核心
+    jiaolong × Claude Code Cowork 集成核心
     整合记忆召回/Skills触发/并行执行/规则检查
     """
 

@@ -6,15 +6,15 @@
   "author": "steven823tw",
   "homepage": "https://github.com/steven823tw/jiaolong",
   "repository": "https://github.com/steven823tw/jiaolong",
-  "keywords": ["openclaw", "ai-assistant", "memory", "automation", "evolution"],
+  "keywords": ["cowork", "ai-assistant", "memory", "automation", "evolution"],
   "license": "MIT",
-  "openclaw": {
+  "cowork": {
     "extensions": ["evolution_framework"],
     "compat": {
       "pluginApi": "1.0"
     },
     "build": {
-      "openclawVersion": ">=1.0.0"
+      "coworkVersion": ">=5.0.0"
     }
   }
 }

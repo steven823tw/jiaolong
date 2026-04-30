@@ -11,7 +11,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
 
-WORKSPACE = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 SKILLS_DIR = WORKSPACE / "evolution_framework" / "skills"
 DEFAULT_TOP_K = 10
 

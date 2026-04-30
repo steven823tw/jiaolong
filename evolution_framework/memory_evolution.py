@@ -125,7 +125,7 @@ class SmartMemoryManager:
                  hot_file: str = None,
                  warm_dir: str = None,
                  cold_dir: str = None):
-        ws = Path(r"C:\Users\steve\.openclaw\workspace")
+        ws = (Path.home() / ".claude" / "jiaolong")
         self.hot_file = Path(hot_file or ws / "memory" / "memory_hot.json")
         self.warm_dir = Path(warm_dir or ws / "memory" / "memory_warm")
         self.cold_dir = Path(cold_dir or ws / "memory" / "memory_cold")

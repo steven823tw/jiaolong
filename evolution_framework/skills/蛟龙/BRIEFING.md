@@ -46,7 +46,7 @@
 
 ## 使用前后对比
 
-### 优化前（OpenClaw原生）
+### 优化前（Claude Code Cowork原生）
 ```
 用户: jiaolong量化系统用的是什么数据源？
 AI: 我不知道jiaolong是什么，你需要介绍背景
@@ -78,9 +78,9 @@ AI: jiaolong量化系统使用XTick数据源(token: 49a1d87...)
 
 ```
 Python 3.8+          核心逻辑
-TypeScript           OpenClaw Hooks
+TypeScript           Claude Code Cowork Hooks
 OpenAI/Anthropic     LLM能力（可选）
-OpenClaw             运行环境
+Claude Code Cowork             运行环境
 ```
 
 ---
@@ -88,7 +88,7 @@ OpenClaw             运行环境
 ## 适合谁用？
 
 - **AI助手开发者** — 想让AI有记忆、会学习
-- **OpenClaw用户** — 想放大OpenClaw的能力
+- **Claude Code Cowork用户** — 想放大Claude Code Cowork的能力
 - **效率主义者** — 讨厌重复操作，想要自动化
 - **代码质量控** — 想要自动化的代码规范检查
 
@@ -97,8 +97,8 @@ OpenClaw             运行环境
 ## 快速安装
 
 ```bash
-# 1. 复制 evolution_framework 到你的 OpenClaw workspace
-# 2. 启用 Hooks（配置 openclaw.json）
+# 1. 复制 evolution_framework 到你的 Claude Code Cowork workspace
+# 2. 启用 Hooks（配置 Claude Code hooks）
 # 3. 验证: python evolution_framework/jarvis_cli.py status
 ```
 

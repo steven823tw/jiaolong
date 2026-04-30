@@ -8,7 +8,7 @@ monitor Skill - 主动监控系统状态
 from __future__ import annotations
 import sys
 from datetime import datetime, timedelta
-sys.path.insert(0, r'C:\Users\steve\.openclaw\workspace\evolution_framework')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from skill_output import ok, err, skill_main
 import json
@@ -69,7 +69,7 @@ def _check_coco() -> dict:
 
 def _check_quant() -> dict:
     """检查量化系统"""
-    quant_dir = Path(r"C:\Users\steve\.openclaw\workspace\quant")
+    quant_dir = (Path.home() / ".claude" / "jiaolong" / "quant")
     if not quant_dir.exists():
         return {"name": "量化系统", "status": "warn",
                 "detail": "quant目录不存在", "icon": "🟡"}
@@ -90,7 +90,7 @@ def _check_quant() -> dict:
 
 def _check_memory() -> dict:
     """检查记忆新鲜度"""
-    hot_file = Path(r"C:\Users\steve\.openclaw\workspace\memory\memory_hot.json")
+    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
     if not hot_file.exists():
         return {"name": "记忆系统", "status": "error",
                 "detail": "memory_hot.json不存在", "icon": "❌"}
@@ -116,7 +116,7 @@ def _check_memory() -> dict:
 
 def _check_tasks() -> dict:
     """检查今日任务"""
-    exp_dir = Path(r"C:\Users\steve\.openclaw\workspace\experiments")
+    exp_dir = (Path.home() / ".claude" / "jiaolong" / "experiments")
     if not exp_dir.exists():
         return {"name": "实验任务", "status": "warn",
                 "detail": "experiments目录不存在", "icon": "🟡"}

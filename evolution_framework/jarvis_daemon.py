@@ -18,7 +18,8 @@ import sys, os, json, time, subprocess
 from pathlib import Path
 from datetime import datetime, timedelta
 
-WORKSPACE = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 DAEMON_DIR = WORKSPACE / "evolution_framework" / "daemon"
 PID_FILE = DAEMON_DIR / "jarvis_daemon.pid"
 CONFIG_FILE = DAEMON_DIR / "daemon_config.json"

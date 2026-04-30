@@ -12,7 +12,8 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 from collections import defaultdict
 
-WORKSPACE = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 MEMORY_DIR = WORKSPACE / "memory"
 HOT_FILE = MEMORY_DIR / "memory_hot.json"
 WARM_DIR = MEMORY_DIR / "memory_warm"

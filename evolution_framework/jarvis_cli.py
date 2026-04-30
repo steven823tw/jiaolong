@@ -21,12 +21,12 @@ from __future__ import annotations
 import sys, json, os
 
 sys.stdout.reconfigure(encoding='utf-8')
-sys.path.insert(0, r'C:\Users\steve\.openclaw\workspace\evolution_framework')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 def cmd_recall(query: str):
     """记忆召回"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     r = jiaolong.recall_query(query)
     if r.get("success"):
         if r.get("found", 0) > 0:
@@ -39,7 +39,7 @@ def cmd_recall(query: str):
 
 def cmd_trigger(message: str):
     """Skills自动触发"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     r = jiaolong.skill_auto_trigger(message)
     if r:
         skill = r["skill"]
@@ -61,7 +61,7 @@ def cmd_trigger(message: str):
 
 def cmd_skills():
     """列出所有Skills"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     skills = jiaolong.skill_list()
     print(f"\n=== 可用Skills ({len(skills)}个) ===\n")
     for s in skills:
@@ -72,7 +72,7 @@ def cmd_skills():
 
 def cmd_agents():
     """显示Agent角色"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     roles = jiaolong.agent_roles()
     print("\n=== jiaolongAgent角色 ===\n")
     for role, info in roles.items():
@@ -83,7 +83,7 @@ def cmd_agents():
 
 def cmd_parallel(name: str, func: str, args_str: str = ""):
     """提交并行任务"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     args = {}
     if args_str:
         for pair in args_str.split(","):
@@ -122,7 +122,7 @@ def cmd_parallel(name: str, func: str, args_str: str = ""):
 
 def cmd_status():
     """显示集成状态"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     s = jiaolong.status()
     print("\n=== jiaolong集成状态 ===\n")
     print(f"  记忆召回:      {'✅ 启用' if s['recall_enabled'] else '❌ 禁用'}")
@@ -135,7 +135,7 @@ def cmd_status():
 
 def cmd_check(file_path: str):
     """代码规则检查"""
-    from openclaw_integration import jiaolong
+    from cowork_integration import jiaolong
     jiaolong.enable_rules()
     r = jiaolong.check_code_rules(file_path)
     print(f"\n=== 规则检查: {file_path} ===\n")

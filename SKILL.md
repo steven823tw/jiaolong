@@ -8,7 +8,7 @@
 
 ### 第1步：复制框架
 
-将 `jiaolong/` 整个目录复制到你的 OpenClaw workspace：
+将 `jiaolong/` 整个目录复制到你的 Claude Code Cowork workspace：
 
 ```
 your-workspace/
@@ -26,9 +26,9 @@ your-workspace/
 ```bash
 # 复制 hooks 目录到 workspace
 # 将jiaolong/evolution_framework/hooks/ 下的两个hook目录
-# 复制到你的 OpenClaw workspace hooks/ 目录
+# 复制到你的 Claude Code Cowork workspace hooks/ 目录
 
-# 然后在 openclaw.json 中添加：
+# 然后在 Claude Code hooks 中添加：
 {
   "hooks": {
     "internal": {
@@ -93,7 +93,7 @@ python evolution_framework/jarvis_cli.py check your_file.py  # 代码规则
 ```
 jiaolong/
 ├── evolution_framework/
-│   ├── openclaw_integration  ← 集成核心
+│   ├── cowork_integration  ← 集成核心
 │   ├── skill_trigger         ← 自动触发引擎
 │   ├── memory_recall         ← 语义召回
 │   ├── parallel_executor     ← 并行执行
@@ -121,8 +121,8 @@ jiaolong/
 
 ## 局限性
 
-- Hooks 需要手动安装到 OpenClaw workspace hooks 目录
-- `before_tool_call` Hook 需要 OpenClaw Plugin API
+- Hooks 需要手动安装到 Claude Code Cowork workspace hooks 目录
+- `before_tool_call` Hook 需要 Claude Code Cowork Plugin API
 - LLM 功能需要配置 API Key（可选）
 
 ---

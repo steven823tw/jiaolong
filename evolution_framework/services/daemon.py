@@ -13,7 +13,8 @@ from typing import Any, Callable, Dict, List, Optional
 from enum import Enum
 import queue
 
-WORKSPACE = Path(r"C:\Users\steve\.openclaw\workspace")
+import os
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
 
 
 class DaemonStatus(str, Enum):

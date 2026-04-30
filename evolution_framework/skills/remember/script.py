@@ -7,7 +7,7 @@ remember Skill - 记忆检查与整理
 """
 from __future__ import annotations
 import sys
-sys.path.insert(0, r'C:\Users\steve\.openclaw\workspace\evolution_framework')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from skill_output import ok, err, skill_main, format_table
 
@@ -26,7 +26,7 @@ def run(query: str = "", detail: bool = False) -> dict:
     """
     import json
 
-    hot_file = Path(r"C:\Users\steve\.openclaw\workspace\memory\memory_hot.json")
+    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
 
     if not hot_file.exists():
         return err("remember", "记忆文件不存在", "memory_hot.json 未找到")
