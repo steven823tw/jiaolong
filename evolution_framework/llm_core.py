@@ -384,7 +384,7 @@ JSON格式输出:
 class MemorySummarizer:
     """
     记忆摘要生成器
-    从会话中提取关键记忆写入memory_hot.json
+    从会话中提取关键记忆（原生 .md 格式）
     """
 
     def __init__(self, provider: str = None):

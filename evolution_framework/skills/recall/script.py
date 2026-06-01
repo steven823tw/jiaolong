@@ -272,38 +272,59 @@ def run(query: str = "", top_k: int = DEFAULT_TOP_K, category: str = None,
     }
 
 
-def _scan_by_category(category: str) -> list:
-    """直接从memory_hot.json扫描指定category的记忆"""
-    import json
+def _load_native_memories() -> list:
+    """从原生 .md 记忆文件加载所有记忆"""
     from pathlib import Path
-
-    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
-    if not hot_file.exists():
+    memory_dir = Path.home() / ".claude" / "projects" / "C--cc" / "memory"
+    if not memory_dir.exists():
         return []
 
-    try:
-        data = json.loads(hot_file.read_text(encoding="utf-8"))
-        facts = data if isinstance(data, list) else data.get("facts", [])
-        return [f for f in facts if f.get("category") == category]
-    except Exception:
-        return []
+    memories = []
+    for md_file in memory_dir.glob("*.md"):
+        if md_file.name == "MEMORY.md":
+            continue
+        try:
+            content = md_file.read_text(encoding="utf-8")
+            name = md_file.stem
+            mem_type = "reference"
+            description = ""
+            if content.startswith("---"):
+                parts = content.split("---", 2)
+                if len(parts) >= 3:
+                    for line in parts[1].strip().split("\n"):
+                        line = line.strip()
+                        if line.startswith("name:"):
+                            name = line[5:].strip().strip('"').strip("'")
+                        elif line.startswith("description:"):
+                            description = line[12:].strip().strip('"').strip("'")
+                        elif line.startswith("type:"):
+                            mem_type = line[5:].strip().strip('"').strip("'")
+                    body = parts[2].strip()
+                else:
+                    body = content
+            else:
+                body = content
+            memories.append({
+                "name": name,
+                "description": description,
+                "type": mem_type,
+                "category": mem_type,
+                "content": body,
+                "file": md_file.name,
+            })
+        except Exception:
+            continue
+    return memories
+
+
+def _scan_by_category(category: str) -> list:
+    """从原生记忆中扫描指定type的记忆"""
+    return [m for m in _load_native_memories() if m.get("type") == category]
 
 
 def _scan_by_category_all() -> list:
-    """直接从memory_hot.json扫描所有记忆（无关键词时）"""
-    import json
-    from pathlib import Path
-
-    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
-    if not hot_file.exists():
-        return []
-
-    try:
-        data = json.loads(hot_file.read_text(encoding="utf-8"))
-        facts = data if isinstance(data, list) else data.get("facts", [])
-        return facts
-    except Exception:
-        return []
+    """扫描所有原生记忆"""
+    return _load_native_memories()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

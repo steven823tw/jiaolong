@@ -2,64 +2,88 @@
   "skills": [
     {
       "name": "simplify",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\simplify",
+      "path": "evolution_framework/skills/simplify",
       "created_at": "2026-04-02T15:49:28.314367",
       "version": "v1.0"
     },
     {
       "name": "research",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\research",
+      "path": "evolution_framework/skills/research",
       "created_at": "2026-04-02T15:49:28.318302",
       "version": "v1.0"
     },
     {
       "name": "remember",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\remember",
+      "path": "evolution_framework/skills/remember",
       "created_at": "2026-04-02T15:49:28.326646",
       "version": "v1.0"
     },
     {
       "name": "dream",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\dream",
+      "path": "evolution_framework/skills/dream",
       "created_at": "2026-04-02T15:49:28.337169",
       "version": "v1.0"
     },
     {
       "name": "monitor",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\monitor",
+      "path": "evolution_framework/skills/monitor",
       "created_at": "2026-04-02T15:49:28.346535",
       "version": "v1.0"
     },
     {
       "name": "evolve",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\evolve",
+      "path": "evolution_framework/skills/evolve",
       "created_at": "2026-04-02T15:49:28.354338",
       "version": "v1.0"
     },
     {
       "name": "quant_screen",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\quant_screen",
+      "path": "evolution_framework/skills/quant_screen",
       "created_at": "2026-04-02T15:49:28.365863",
       "version": "v1.0"
     },
     {
       "name": "team_analyze",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\team_analyze",
+      "path": "evolution_framework/skills/team_analyze",
       "created_at": "2026-04-02T15:49:28.376176",
       "version": "v1.0"
     },
     {
       "name": "extract_memories",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\extract_memories",
+      "path": "evolution_framework/skills/extract_memories",
       "created_at": "2026-04-02T15:49:28.386242",
       "version": "v1.0"
     },
     {
       "name": "status_report",
-      "path": "C:\\Users\\steve\\.claude\\jiaolong\\evolution_framework\\skills\\status_report",
+      "path": "evolution_framework/skills/status_report",
       "created_at": "2026-04-02T15:49:28.395142",
       "version": "v1.0"
+    },
+    {
+      "name": "experiment_logger",
+      "path": "evolution_framework/skills/experiment_logger",
+      "created_at": "2026-04-02T15:49:28.400000",
+      "version": "v1.0"
+    },
+    {
+      "name": "tool_builder",
+      "path": "evolution_framework/skills/tool_builder",
+      "created_at": "2026-04-02T15:49:28.410000",
+      "version": "v1.0"
+    },
+    {
+      "name": "auto_decompose",
+      "path": "evolution_framework/skills/auto_decompose_skills",
+      "created_at": "2026-04-02T15:49:28.420000",
+      "version": "v1.0"
+    },
+    {
+      "name": "蛟龙",
+      "path": "evolution_framework/skills/蛟龙",
+      "created_at": "2026-04-30T18:22:00.000000",
+      "version": "v6.1.0"
     }
   ],
-  "last_updated": "2026-04-02T15:49:28.395142"
+  "last_updated": "2026-06-01T21:30:00.000000"
 }

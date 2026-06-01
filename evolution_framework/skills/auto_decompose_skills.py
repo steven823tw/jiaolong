@@ -68,8 +68,8 @@ class SkillManifest:
                 {"name": "query", "type": "str", "description": "查询关键词"}
             ],
             "steps": [
-                "1. 搜索memory_hot.json",
-                "2. 检查OMLX温冷层",
+                "1. 搜索原生记忆 (.md)",
+                "2. 关键词匹配",
                 "3. 汇总相关事实",
                 "4. 提供上下文"
             ],

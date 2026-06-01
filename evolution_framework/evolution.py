@@ -2,7 +2,7 @@
 """
 jiaolong自进化框架 - evolution.py
 > 核心自进化循环（仿 Karpathy AutoResearch train.py）
-> 版本: v1.0 | 2026-04-02
+> 版本: v6.1.0 | 2026-06-01
 
 灵感来源:
 - Karpathy AutoResearch: 实验循环 = 改代码 → 训练 → 评估 → 保留/丢弃
@@ -30,17 +30,17 @@ from enum import Enum
 # ─────────────────────────────────────────────────────────────────────────────
 # 路径配置
 # ─────────────────────────────────────────────────────────────────────────────
-import os
-WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", "C:/cc/jiaolong-cowork"))
 EVOLUTION_DIR  = WORKSPACE / "evolution_framework"
 EXPERIMENTS   = EVOLUTION_DIR / "experiments"
-MEMORY_DIR    = WORKSPACE / "memory"
-SKILLS_DIR    = WORKSPACE / "skills"
-MEMORY_HOT    = MEMORY_DIR / "memory_hot.json"
+SKILLS_DIR    = EVOLUTION_DIR / "skills"
 AGENTS_FILE   = WORKSPACE / "AGENTS.md"
 MEMORY_FILE   = WORKSPACE / "MEMORY.md"
-SOUL_FILE     = WORKSPACE / "SOUL.md"
 LOG_FILE      = EXPERIMENTS / "experiment_log.md"
+
+# 原生记忆目录
+CLAUDE_PROJECTS = Path.home() / ".claude" / "projects"
+NATIVE_MEMORY_DIR = CLAUDE_PROJECTS / "C--cc" / "memory"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 指标定义
@@ -116,30 +116,24 @@ def count_skill_files() -> int:
 def measure_memory_hit_rate() -> float:
     """
     测量记忆命中率
-    = 7天内相同问题重复出现时命中热记忆的比例
-    简化版：检查memory_hot.json中7天内更新的条目占比
+    = 原生 .md 记忆文件中 7 天内修改的条目占比
     """
-    hot = read_json(MEMORY_HOT, [])
-    if not hot:
+    if not NATIVE_MEMORY_DIR.exists():
         return 0.0
     now = datetime.now()
     cutoff = now - timedelta(days=7)
     recent = 0
     total = 0
-    for item in hot:
+    for md_file in NATIVE_MEMORY_DIR.glob("*.md"):
+        if md_file.name == "MEMORY.md":
+            continue
         total += 1
-        updated = ""
-        if isinstance(item, dict):
-            updated = item.get("updated", "")
-        elif isinstance(item, str):
-            updated = item
-        if updated:
-            try:
-                dt = datetime.fromisoformat(updated.replace("Z",""))
-                if dt >= cutoff:
-                    recent += 1
-            except:
-                pass
+        try:
+            mtime = datetime.fromtimestamp(md_file.stat().st_mtime)
+            if mtime >= cutoff:
+                recent += 1
+        except Exception:
+            pass
     return recent / max(total, 1)
 
 def measure_l2_l3_ratio() -> float:
@@ -413,8 +407,8 @@ def run_experiment(
 
 DISCOVERY_PROMPTS = [
     ("extract_memories", "记忆命中率 < 80%", """
-分析 memory/memory_hot.json，找出7天内未被访问的条目。
-如果命中率 < 80%，提出改进假设：用LLM从最近会话中自动提取记忆。
+分析 ~/.claude/projects/{project}/memory/*.md，找出7天内未被更新的记忆文件。
+如果命中率 < 80%，提出改进假设：优化记忆提取策略。
 """),
     ("tool_gap", "工具完善度 < 70%", """
 对比 Claude Code 的40+工具列表和当前小笨的工具数量。

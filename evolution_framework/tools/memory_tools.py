@@ -1,238 +1,119 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
-jiaolong工具 - MemoryTools (记忆系统专用)
-> 版本: v1.0 | 2026-04-02
-> 记忆读写、搜索、OMLX操作
+jiaolong工具 - MemoryTools (原生记忆系统)
+> 版本: v6.1.0 | 2026-06-01
+> 记忆读写、搜索（原生 .md 格式）
 """
 from __future__ import annotations
-import json, sys
+import sys
 from pathlib import Path
-from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 from .tool_spec import ToolSpec, ToolResult, PermissionModel
 
 
-import os
-WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
-MEMORY_DIR = WORKSPACE / "memory"
-HOT_FILE = MEMORY_DIR / "memory_hot.json"
+CLAUDE_PROJECTS = Path.home() / ".claude" / "projects"
+NATIVE_MEMORY_DIR = CLAUDE_PROJECTS / "C--cc" / "memory"
+
+
+def _load_md_memories(memory_dir: Path) -> list:
+    """从原生 .md 文件加载记忆"""
+    memories = []
+    if not memory_dir.exists():
+        return memories
+    for md_file in memory_dir.glob("*.md"):
+        if md_file.name == "MEMORY.md":
+            continue
+        try:
+            content = md_file.read_text(encoding="utf-8")
+            name = md_file.stem
+            mem_type = "reference"
+            description = ""
+            if content.startswith("---"):
+                parts = content.split("---", 2)
+                if len(parts) >= 3:
+                    for line in parts[1].strip().split("\n"):
+                        line = line.strip()
+                        if line.startswith("name:"):
+                            name = line[5:].strip().strip('"').strip("'")
+                        elif line.startswith("description:"):
+                            description = line[12:].strip().strip('"').strip("'")
+                        elif line.startswith("type:"):
+                            mem_type = line[5:].strip().strip('"').strip("'")
+                    body = parts[2].strip()
+                else:
+                    body = content
+            else:
+                body = content
+            memories.append({
+                "name": name,
+                "description": description,
+                "type": mem_type,
+                "content": body,
+                "file": md_file.name,
+            })
+        except Exception:
+            continue
+    return memories
 
 
 class MemoryReadTool(ToolSpec):
-    """读取记忆"""
+    """读取原生记忆"""
     name = "memory_read"
-    description = "读取memory_hot.json中的记忆"
+    description = "读取原生 .md 记忆文件"
     permission_model = PermissionModel.AUTO
     risk_level = 1
-    tags = ["memory", "read", "omlx"]
+    tags = ["memory", "read"]
 
     input_schema = {
         "type": "object",
         "properties": {
-            "category": {"type": "string", "description": "按category筛选"},
+            "category": {"type": "string", "description": "按type筛选"},
             "limit": {"type": "integer", "description": "返回数量", "default": 50}
         }
     }
 
     def execute(self, category: str = None, limit: int = 50, **kwargs) -> ToolResult:
         try:
-            with open(HOT_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            facts = data.get("facts", [])
+            memories = _load_md_memories(NATIVE_MEMORY_DIR)
             if category:
-                facts = [f for f in facts if f.get("category") == category]
-            facts = facts[-limit:]
-            return ToolResult(success=True, data={
-                "count": len(facts),
-                "facts": [{"id": f.get("id"), "content": f.get("content")[:80],
-                           "category": f.get("category"), "confidence": f.get("confidence")}
-                          for f in facts]
-            })
-        except Exception as e:
-            return ToolResult(success=False, error=str(e))
-
-
-class MemorySearchTool(ToolSpec):
-    """搜索记忆"""
-    name = "memory_search"
-    description = "在记忆中搜索关键词"
-    permission_model = PermissionModel.AUTO
-    risk_level = 1
-    tags = ["memory", "search"]
-
-    input_schema = {
-        "type": "object",
-        "properties": {
-            "query": {"type": "string", "description": "搜索关键词"},
-            "category": {"type": "string", "description": "限定category"}
-        }
-    },
-    required = ["query"]
-
-    def execute(self, query: str, category: str = None, **kwargs) -> ToolResult:
-        try:
-            with open(HOT_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            q = query.lower()
-            facts = data.get("facts", [])
-            results = []
-            for f in facts:
-                content = f.get("content", "").lower()
-                if q in content:
-                    if category is None or f.get("category") == category:
-                        results.append({
-                            "id": f.get("id"),
-                            "content": f.get("content"),
-                            "category": f.get("category"),
-                            "confidence": f.get("confidence"),
-                        })
-            return ToolResult(success=True, data={
-                "query": query,
-                "found": len(results),
-                "results": results[:20]
-            })
+                memories = [m for m in memories if m.get("type") == category]
+            return ToolResult(success=True, data=memories[:limit])
         except Exception as e:
             return ToolResult(success=False, error=str(e))
 
 
 class MemoryWriteTool(ToolSpec):
-    """写入记忆"""
+    """写入记忆（创建 .md 文件）"""
     name = "memory_write"
-    description = "向memory_hot.json写入单条记忆"
+    description = "向原生记忆系统写入一条记忆"
     permission_model = PermissionModel.CONFIRM
     risk_level = 2
-    tags = ["memory", "write", "omlx"]
+    tags = ["memory", "write"]
 
     input_schema = {
         "type": "object",
         "properties": {
+            "name": {"type": "string", "description": "记忆名称"},
             "content": {"type": "string", "description": "记忆内容"},
-            "category": {
-                "type": "string",
-                "enum": ["context", "goal", "preference", "project", "knowledge",
-                        "behavior", "investment", "feedback", "decision"],
-                "description": "记忆类别"
-            },
-            "confidence": {"type": "number", "description": "置信度", "default": 0.80}
+            "type": {"type": "string", "description": "类型", "default": "reference"}
         },
-        "required": ["content", "category"]
+        "required": ["name", "content"]
     }
 
-    def execute(self, content: str, category: str, confidence: float = 0.80,
-                 **kwargs) -> ToolResult:
-        import hashlib
+    def execute(self, name: str, content: str, type: str = "reference", **kwargs) -> ToolResult:
         try:
-            with open(HOT_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            facts = data.get("facts", [])
+            NATIVE_MEMORY_DIR.mkdir(parents=True, exist_ok=True)
+            safe_name = name.replace(" ", "-").replace("/", "-")[:50]
+            md_file = NATIVE_MEMORY_DIR / f"{safe_name}.md"
+            md_content = f"""---
+name: {name}
+description: {content[:100]}
+type: {type}
+---
 
-            ts = datetime.now().isoformat()
-            fid = hashlib.md5((content + ts).encode()).hexdigest()[:12]
-            new_fact = {
-                "id": f"manual_{fid}",
-                "content": content[:200],
-                "category": category,
-                "confidence": confidence,
-                "createdAt": ts,
-                "lastAccessed": ts,
-                "accessCount": 1,
-                "source": "memory_write_tool",
-            }
-            facts.append(new_fact)
-            data["facts"] = facts
-            with open(HOT_FILE, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-
-            return ToolResult(success=True, data={
-                "id": new_fact["id"],
-                "category": category,
-                "total_facts": len(facts)
-            })
-        except Exception as e:
-            return ToolResult(success=False, error=str(e))
-
-
-class MemoryStatsTool(ToolSpec):
-    """记忆统计"""
-    name = "memory_stats"
-    description = "查看记忆系统统计信息"
-    permission_model = PermissionModel.AUTO
-    risk_level = 1
-    tags = ["memory", "stats"]
-
-    input_schema = {"type": "object", "properties": {}}
-
-    def execute(self, **kwargs) -> ToolResult:
-        try:
-            with open(HOT_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            facts = data.get("facts", [])
-
-            cats = {}
-            sources = {}
-            total_conf = 0
-            for f in facts:
-                c = f.get("category", "?")
-                cats[c] = cats.get(c, 0) + 1
-                s = f.get("source", "?")
-                sources[s] = sources.get(s, 0) + 1
-                total_conf += f.get("confidence", 0)
-
-            avg_conf = total_conf / len(facts) if facts else 0
-            balance = 1 - (max(cats.values()) - min(cats.values())) / max(cats.values()) if cats else 0
-
-            return ToolResult(success=True, data={
-                "total_facts": len(facts),
-                "by_category": cats,
-                "by_source": sources,
-                "avg_confidence": round(avg_conf, 3),
-                "category_balance": round(balance, 3),
-                "file_size_kb": round(HOT_FILE.stat().st_size / 1024, 1),
-            })
-        except Exception as e:
-            return ToolResult(success=False, error=str(e))
-
-
-class MemoryOMLXTool(ToolSpec):
-    """OMLX记忆交换操作"""
-    name = "memory_omlx"
-    description = "调用OMLX MemorySwapManager操作"
-    permission_model = PermissionModel.AUTO
-    risk_level = 1
-    tags = ["memory", "omlx", "swap"]
-
-    input_schema = {
-        "type": "object",
-        "properties": {
-            "action": {
-                "type": "string",
-                "enum": ["status", "swap", "search", "touch"],
-                "description": "操作类型"
-            },
-            "query": {"type": "string", "description": "搜索查询"},
-            "fact_id": {"type": "string", "description": "记忆ID"}
-        }
-    }
-
-    def execute(self, action: str, query: str = None,
-                 fact_id: str = None, **kwargs) -> ToolResult:
-        try:
-            sys.path.insert(0, str(MEMORY_DIR))
-            from memory_swap_manager import MemorySwapManager
-            mgr = MemorySwapManager()
-
-            if action == "status":
-                stats = mgr.status()
-                return ToolResult(success=True, data={"status": stats})
-
-            if action == "search" and query:
-                results = mgr.search(query)
-                return ToolResult(success=True, data={"query": query, "found": len(results), "results": results[:10]})
-
-            if action == "touch" and fact_id:
-                mgr.touch_fact(fact_id)
-                return ToolResult(success=True, data={"touched": fact_id})
-
-            return ToolResult(success=True, data={"message": f"action={action} executed"})
+{content}
+"""
+            md_file.write_text(md_content, encoding="utf-8")
+            return ToolResult(success=True, data={"file": str(md_file)})
         except Exception as e:
             return ToolResult(success=False, error=str(e))

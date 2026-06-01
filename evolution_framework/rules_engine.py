@@ -248,58 +248,6 @@ class PythonLinter:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# JavaScript规则检查器（基础版）
-# ─────────────────────────────────────────────────────────────────────────────
-
-class JavaScriptLinter:
-    """JavaScript代码规则检查"""
-
-    def __init__(self, content: str, filename: str = "temp.js"):
-        self.content = content
-        self.filename = filename
-        self.lines = content.split("\n")
-        self.violations: List[RuleViolation] = []
-
-    def check_all(self) -> List[RuleViolation]:
-        if self._tree is None:
-            return self.violations
-        self._check_empty_functions_js()
-        self._check_generic_names_js()
-        return self.violations
-
-    def _add_violation(self, rule: str, level: RuleLevel,
-                       message: str, line: int = 0, fix: str = ""):
-        self.violations.append(RuleViolation(
-            rule=rule, level=level, message=message,
-            line=line, fix_suggestion=fix
-        ))
-
-    def _check_empty_functions_js(self):
-        """JS空函数检查"""
-        for i, line in enumerate(self.lines, 1):
-            stripped = line.strip()
-            if 'function' in stripped or '=>' in stripped:
-                # 简单检查：function name() {} 或 const name = () => {}
-                if re.search(r'(function\s+\w+|const\s+\w+\s*=\s*\([^)]*\)\s*=>)\s*\{\s*\}', self.content):
-                    self._add_violation(
-                        "NoHandWavingRule_JS",
-                        RuleLevel.ERROR,
-                        f"发现空JS函数",
-                        line=i,
-                        fix="实现函数逻辑或删除"
-                    )
-
-    def _check_generic_names_js(self):
-        """JS通用名称检查"""
-        generic = ['data', 'info', 'item', 'handler', 'tmp', 'temp', 'result']
-        for i, line in enumerate(self.lines, 1):
-            for g in generic:
-                if re.search(rf'\b{g}\b', line) and '//' not in line:
-                    # 简单检查
-                    pass
-
-
-# ─────────────────────────────────────────────────────────────────────────────
 # 主规则引擎
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -314,14 +262,11 @@ class RulesEngine:
         self.version = "2.0"
 
     def check_content(self, content: str, filename: str = "temp.py") -> List[RuleViolation]:
-        """检查代码内容"""
+        """检查代码内容（仅支持 Python）"""
         ext = Path(filename).suffix.lower()
 
         if ext in (".py", ".pyw"):
             linter = PythonLinter(content, filename)
-            return linter.check_all()
-        elif ext in (".js", ".ts", ".tsx", ".jsx"):
-            linter = JavaScriptLinter(content, filename)
             return linter.check_all()
         else:
             return []

@@ -37,7 +37,7 @@ def get_evolution_dir() -> Path:
 
 
 def get_memory_dir() -> Path:
-    """获取记忆存储目录 (legacy: memory_hot.json)"""
+    """获取记忆存储目录 (legacy, 原生系统使用 get_native_memory_dir)"""
     return get_workspace() / "memory"
 
 
@@ -70,31 +70,6 @@ def get_experiments_dir() -> Path:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 常用文件路径
-# ─────────────────────────────────────────────────────────────────────────────
-
-# Legacy paths (v5.x) — deprecated, use native memory system
-def memory_hot_path() -> Path:
-    """DEPRECATED: Use get_native_memory_dir() instead"""
-    return get_memory_dir() / "memory_hot.json"
-
-
-def memory_index_path() -> Path:
-    """DEPRECATED: Use get_native_memory_dir() / MEMORY.md instead"""
-    return get_memory_dir() / "memory_index.json"
-
-
-def memory_warm_dir() -> Path:
-    """DEPRECATED: Archive not needed with native memory"""
-    return get_memory_dir() / "memory_warm"
-
-
-def memory_cold_dir() -> Path:
-    """DEPRECATED: Archive not needed with native memory"""
-    return get_memory_dir() / "memory_cold"
-
-
-# ─────────────────────────────────────────────────────────────────────────────
 # 初始化：确保目录存在
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -103,26 +78,12 @@ def ensure_dirs():
     dirs = [
         get_workspace(),
         get_evolution_dir(),
-        get_memory_dir(),
         get_skills_dir(),
-        get_memory_dir() / "memory_warm",
-        get_memory_dir() / "memory_cold",
         get_experiments_dir(),
+        get_native_memory_dir(),
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
-
-
-def init_memory():
-    """初始化空的记忆文件（如果不存在）"""
-    hot = memory_hot_path()
-    if not hot.exists():
-        hot.parent.mkdir(parents=True, exist_ok=True)
-        import json
-        hot.write_text(
-            json.dumps({"facts": [], "version": "1.0"}, ensure_ascii=False, indent=2),
-            encoding="utf-8"
-        )
 
 
 # ─────────────────────────────────────────────────────────────────────────────

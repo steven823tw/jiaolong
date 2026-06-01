@@ -89,26 +89,30 @@ def _check_quant() -> dict:
 
 
 def _check_memory() -> dict:
-    """检查记忆新鲜度"""
-    hot_file = (Path.home() / ".claude" / "jiaolong" / "memory" / "memory_hot.json")
-    if not hot_file.exists():
+    """检查记忆新鲜度（原生 .md 系统）"""
+    memory_dir = Path.home() / ".claude" / "projects" / "C--cc" / "memory"
+    if not memory_dir.exists():
         return {"name": "记忆系统", "status": "error",
-                "detail": "memory_hot.json不存在", "icon": "❌"}
+                "detail": "原生记忆目录不存在", "icon": "❌"}
 
     try:
         import time
-        age_days = (time.time() - hot_file.stat().st_mtime) / _SECONDS_PER_DAY
-        detail = f"memory_hot.json ({age_days:.1f}天前更新)"
+        md_files = [f for f in memory_dir.glob("*.md") if f.name != "MEMORY.md"]
+        count = len(md_files)
 
-        data = json.loads(hot_file.read_text(encoding="utf-8"))
-        facts = data if isinstance(data, list) else data.get("facts", [])
-        count = len(facts)
+        if count == 0:
+            return {"name": "记忆系统", "status": "warn",
+                    "detail": "无记忆文件", "icon": "🟡"}
+
+        newest = max(md_files, key=lambda f: f.stat().st_mtime)
+        age_days = (time.time() - newest.stat().st_mtime) / _SECONDS_PER_DAY
+        detail = f"原生记忆 ({count}条，最新{age_days:.1f}天前)"
 
         if age_days > 1:
             return {"name": "记忆新鲜度", "status": "warn",
-                    "detail": f"{detail}，{count}条记忆", "icon": "🟡"}
+                    "detail": detail, "icon": "🟡"}
         return {"name": "记忆新鲜度", "status": "ok",
-                "detail": f"{detail}，{count}条记忆", "icon": "✅"}
+                "detail": detail, "icon": "✅"}
     except Exception as e:
         return {"name": "记忆系统", "status": "warn",
                 "detail": f"读取异常: {e}", "icon": "🟡"}

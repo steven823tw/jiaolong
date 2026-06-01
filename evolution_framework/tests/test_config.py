@@ -10,20 +10,14 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from jiaolong_config import (
+    ensure_dirs,
     get_evolution_dir,
     get_experiments_dir,
     get_home,
-    get_memory_dir,
     get_native_memory_dir,
     get_skills_dir,
     get_workspace,
-    memory_hot_path,
 )
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Path functions
-# ─────────────────────────────────────────────────────────────────────────────
 
 
 class TestConfigPaths:
@@ -51,20 +45,23 @@ class TestConfigPaths:
         assert exp.exists()
         assert exp.is_dir()
 
-    def test_get_memory_dir(self):
-        mem = get_memory_dir()
-        assert isinstance(mem, Path)
-
     def test_get_native_memory_dir(self):
         native = get_native_memory_dir()
         assert isinstance(native, Path)
         assert "memory" in str(native)
-
-    def test_memory_hot_path(self):
-        hot = memory_hot_path()
-        assert isinstance(hot, Path)
-        assert "memory_hot.json" in str(hot)
+        assert "C--cc" in str(native)
 
     def test_workspace_is_jiaolong_cowork(self):
         workspace = get_workspace()
         assert "jiaolong-cowork" in str(workspace)
+
+    def test_ensure_dirs_creates_dirs(self):
+        # Should not raise
+        ensure_dirs()
+        assert get_evolution_dir().exists()
+        assert get_experiments_dir().exists()
+
+    def test_path_relationships(self):
+        workspace = get_workspace()
+        assert str(get_evolution_dir()) == str(workspace / "evolution_framework")
+        assert str(get_skills_dir()) == str(workspace / "skills")

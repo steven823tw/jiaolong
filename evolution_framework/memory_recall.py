@@ -1,22 +1,65 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 jiaolong记忆召回增强 - Memory Recall Enhancement
-> 版本: v1.0 | 2026-04-02
-> 对应: Claude Code extractMemories 召回机制
+> 版本: v6.1.0 | 2026-06-01
+> 对应: Claude Code 原生记忆系统 (~/.claude/projects/{project}/memory/*.md)
 > 用途: 每次对话自动召回相关记忆，注入上下文
+>
+> v6.1.0: 从 memory_hot.json 迁移到原生 .md 文件系统
 """
 from __future__ import annotations
-import json, re
+import re
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
-from collections import defaultdict
+from typing import Any, Dict, List, Optional
 
 import os
-WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
-MEMORY_DIR = WORKSPACE / "memory"
-HOT_FILE = MEMORY_DIR / "memory_hot.json"
-WARM_DIR = MEMORY_DIR / "memory_warm"
+
+HOME = Path.home()
+CLAUDE_PROJECTS = HOME / ".claude" / "projects"
+
+# 原生记忆类型 → 类别权重映射
+TYPE_WEIGHTS = {
+    "feedback": 1.5,    # 反馈类记忆最重要
+    "user": 1.3,        # 用户偏好
+    "project": 1.2,     # 项目相关
+    "reference": 1.0,   # 参考资料
+}
+
+
+def get_project_memory_dir(cwd: str = None) -> Path:
+    """根据 cwd 推断 Claude Code 项目记忆目录"""
+    if not cwd:
+        cwd = os.getcwd()
+    project_name = cwd.replace(":\\", "--").replace("\\", "--").replace(":", "--")
+    project_name = project_name.rstrip("-")
+    return CLAUDE_PROJECTS / project_name / "memory"
+
+
+def parse_md_frontmatter(content: str) -> dict:
+    """解析 .md 文件的 YAML frontmatter"""
+    result = {"name": "", "description": "", "type": "reference", "body": ""}
+    if not content.startswith("---"):
+        result["body"] = content
+        return result
+
+    parts = content.split("---", 2)
+    if len(parts) >= 3:
+        frontmatter = parts[1].strip()
+        result["body"] = parts[2].strip()
+
+        for line in frontmatter.split("\n"):
+            line = line.strip()
+            if line.startswith("name:"):
+                result["name"] = line[5:].strip().strip('"').strip("'")
+            elif line.startswith("description:"):
+                result["description"] = line[12:].strip().strip('"').strip("'")
+            elif line.startswith("type:"):
+                result["type"] = line[5:].strip().strip('"').strip("'")
+    else:
+        result["body"] = content
+
+    return result
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -25,24 +68,12 @@ WARM_DIR = MEMORY_DIR / "memory_warm"
 
 class MemoryRetriever:
     """
-    记忆检索器 - 根据当前对话上下文召回相关记忆
+    记忆检索器 - 从 Claude Code 原生 .md 记忆系统召回相关记忆
     """
 
-    # 记忆类别优先级
-    CATEGORY_PRIORITY = {
-        "decision": 1.5,
-        "preference": 1.3,
-        "project": 1.2,
-        "goal": 1.2,
-        "context": 1.0,
-        "knowledge": 0.9,
-        "behavior": 0.8,
-        "feedback": 0.8,
-        "investment": 0.7,
-    }
-
-    def __init__(self, top_k: int = 10):
+    def __init__(self, top_k: int = 10, memory_dir: Path = None):
         self.top_k = top_k
+        self._memory_dir = memory_dir
 
     def retrieve(self, query: str, session_history: List[dict] = None,
                  category_filter: str = None,
@@ -53,7 +84,7 @@ class MemoryRetriever:
         Args:
             query: 当前对话主题
             session_history: 最近会话历史（可选）
-            category_filter: 只召回特定category
+            category_filter: 只召回特定type
             hours_back: 只召回最近N小时的记忆（默认7天=168h）
 
         Returns:
@@ -66,36 +97,33 @@ class MemoryRetriever:
         # 1. 查询关键词匹配
         scored = []
         query_lower = query.lower()
-        query_words = set(re.findall(r"[\u4e00-\u9fa5]{2,}|\w+", query_lower))
+        query_words = set(re.findall(r"[一-龥]{2,}|\w+", query_lower))
 
         for fact in facts:
             score = 0.0
             content = fact.get("content", "").lower()
-            cat = fact.get("category", "context")
+            mem_type = fact.get("type", "reference")
 
             # 类别权重
-            cat_weight = self.CATEGORY_PRIORITY.get(cat, 1.0)
+            type_weight = TYPE_WEIGHTS.get(mem_type, 1.0)
 
             # 关键词精确匹配
-            content_words = set(re.findall(r"[\u4e00-\u9fa5]{2,}|\w+", content))
+            content_words = set(re.findall(r"[一-龥]{2,}|\w+", content))
             exact_matches = query_words & content_words
-            score += len(exact_matches) * 2.0 * cat_weight
+            score += len(exact_matches) * 2.0 * type_weight
 
             # 模糊匹配（包含）
             for qw in query_words:
                 if qw in content:
-                    score += 0.5 * cat_weight
+                    score += 0.5 * type_weight
 
             # 完整短语匹配
             if query_lower in content:
-                score += 3.0 * cat_weight
+                score += 3.0 * type_weight
 
             # 类别奖励
-            if category_filter and cat == category_filter:
+            if category_filter and mem_type == category_filter:
                 score += 1.0
-
-            # 置信度奖励
-            score += fact.get("confidence", 0.5) * 0.5
 
             # 时效性衰减（越新越好）
             age_hours = self._get_age_hours(fact)
@@ -118,48 +146,41 @@ class MemoryRetriever:
         return unique[:self.top_k]
 
     def _load_facts(self, hours_back: int = 168) -> List[dict]:
-        """加载记忆（支持OMLX三层）"""
+        """从 Claude Code 原生 .md 记忆文件加载记忆"""
+        memory_dir = self._memory_dir or get_project_memory_dir()
+        if not memory_dir.exists():
+            return []
+
         facts = []
-
-        # 1. 热层
-        try:
-            with open(HOT_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            facts.extend(data.get("facts", []) if isinstance(data, dict) else data)
-        except Exception:
-            pass
-
-        # 2. 温层（最近月份）
-        try:
-            if WARM_DIR.exists():
-                recent_months = sorted(WARM_DIR.glob("*/*"))[-2:]  # 最近2个月
-                for month_dir in recent_months:
-                    for fact_file in month_dir.glob("*.json"):
-                        try:
-                            facts.extend(json.loads(fact_file.read_text(encoding="utf-8")))
-                        except Exception:
-                            pass
-        except Exception:
-            pass
-
-        # 过滤时间
         cutoff = datetime.now() - timedelta(hours=hours_back)
-        filtered = []
-        for f in facts:
-            created = f.get("createdAt", "")
-            if created:
-                try:
-                    dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
-                    if dt.tzinfo:
-                        dt = dt.replace(tzinfo=None)
-                    if dt >= cutoff:
-                        filtered.append(f)
-                except Exception:
-                    filtered.append(f)
-            else:
-                filtered.append(f)
 
-        return filtered
+        for md_file in memory_dir.glob("*.md"):
+            if md_file.name == "MEMORY.md":
+                continue  # 跳过索引文件
+
+            try:
+                raw = md_file.read_text(encoding="utf-8")
+                parsed = parse_md_frontmatter(raw)
+
+                # 获取文件修改时间作为创建时间
+                mtime = datetime.fromtimestamp(md_file.stat().st_mtime)
+                if mtime < cutoff:
+                    continue  # 跳过太旧的记忆
+
+                facts.append({
+                    "content": parsed["body"],
+                    "name": parsed["name"],
+                    "description": parsed["description"],
+                    "type": parsed["type"],
+                    "category": parsed["type"],  # 兼容旧格式
+                    "createdAt": mtime.isoformat(),
+                    "source": str(md_file.name),
+                    "confidence": 0.8,
+                })
+            except Exception:
+                continue
+
+        return facts
 
     def _get_age_hours(self, fact: dict) -> float:
         """计算记忆年龄（小时）"""
@@ -185,8 +206,8 @@ class MemoryInjector:
     记忆注入器 - 将召回的记忆格式化为上下文字符串
     """
 
-    def __init__(self, top_k: int = 10):
-        self.retriever = MemoryRetriever(top_k=top_k)
+    def __init__(self, top_k: int = 10, memory_dir: Path = None):
+        self.retriever = MemoryRetriever(top_k=top_k, memory_dir=memory_dir)
         self._top_k = top_k
 
     def build_context_prompt(self, query: str,
@@ -198,100 +219,23 @@ class MemoryInjector:
         Returns:
             格式化的记忆上下文字符串，可直接注入system prompt
         """
-        if max_memories != self._top_k:
-            self.retriever = MemoryRetriever(top_k=max_memories)
-            self._top_k = max_memories
         memories = self.retriever.retrieve(query, session_history)
         if not memories:
             return ""
 
-        lines = ["\n\n## 相关记忆（Relevant Memories）"]
-        lines.append(f"（基于当前对话自动召回 {len(memories)} 条相关记忆）\n")
+        lines = ["## 相关记忆\n"]
+        for i, mem in enumerate(memories[:max_memories], 1):
+            name = mem.get("name", "unnamed")
+            mem_type = mem.get("type", "reference")
+            desc = mem.get("description", "")
+            content = mem.get("content", "")
+            score = mem.get("_relevance_score", 0)
 
-        for i, m in enumerate(memories, 1):
-            cat = m.get("category", "?")
-            conf = m.get("confidence", 0)
-            content = m.get("content", "")
-            score = m.get("_relevance_score", 0)
-            source = m.get("source", "")
-            created = m.get("createdAt", "")[:10] if m.get("createdAt") else ""
+            lines.append(f"### {i}. [{mem_type}] {name}")
+            if desc:
+                lines.append(f"**描述**: {desc}")
+            lines.append(f"**相关度**: {score}")
+            lines.append(f"**内容**: {content[:500]}")
+            lines.append("")
 
-            # 类别emoji
-            cat_emoji = {
-                "decision": "🎯",
-                "preference": "💡",
-                "project": "📋",
-                "goal": "🎯",
-                "context": "📎",
-                "knowledge": "📚",
-                "behavior": "🔄",
-                "feedback": "💬",
-                "investment": "💰",
-            }.get(cat, "📝")
-
-            lines.append(f"{i}. {cat_emoji} [{cat}] (置信{conf:.0%} | 相关度{score:.1f})")
-            lines.append(f"   {content}")
-            if source:
-                lines.append(f"   来源: {source}")
-            if created:
-                lines.append(f"   时间: {created}")
-
-        lines.append("\n---\n提示: 上述记忆来自历史交互，如有相关请参考。")
         return "\n".join(lines)
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 快速召回函数
-# ─────────────────────────────────────────────────────────────────────────────
-
-def recall_memories(query: str, top_k: int = 10, hours_back: int = 168) -> List[dict]:
-    """快速召回记忆（CLI入口）"""
-    retriever = MemoryRetriever(top_k=top_k)
-    memories = retriever.retrieve(query, hours_back=hours_back)
-    return memories
-
-
-def inject_memory_context(query: str, session_history: List[dict] = None) -> str:
-    """注入记忆上下文到prompt（CLI入口）"""
-    injector = MemoryInjector()
-    return injector.build_context_prompt(query, session_history)
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# CLI
-# ─────────────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import sys
-    sys.stdout.reconfigure(encoding='utf-8')
-
-    print("=== 记忆召回增强验证 ===")
-
-    injector = MemoryInjector()
-    retriever = MemoryRetriever(top_k=5)
-
-    # 测试召回
-    test_queries = [
-        "jiaolong",
-        "COCO",
-        "量化",
-        "进化",
-        "记忆",
-    ]
-
-    for q in test_queries:
-        memories = retriever.retrieve(q)
-        print(f"\n召回 '{q}': {len(memories)} 条")
-        for m in memories[:3]:
-            print(f"  [{m.get('category', '?')}] {m.get('content', '')[:50]}... (score={m.get('_relevance_score', 0):.1f})")
-
-    # 测试上下文注入
-    print("\n--- 上下文注入 ---")
-    inj = MemoryInjector(top_k=5)
-    context = inj.build_context_prompt("COCO开发")
-    if context:
-        print(context[:500])
-    else:
-        print("(无相关记忆)")
-
-    print("\n✅ 记忆召回验证完成")
