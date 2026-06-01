@@ -65,6 +65,12 @@ DEFAULT_TRIGGERS = {
     # 团队协作
     "团队分析": "team_analyze",
     "/team_analyze": "team_analyze",
+
+    # 博弈审查
+    "博弈审查": "code_review_debate",
+    "/review": "code_review_debate",
+    "/debate": "code_review_debate",
+    "代码审查": "code_review_debate",
 }
 
 
