@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 jiaolong 统一配置模块 (cowork 适配版)
-> 版本: v6.0.0 | 2026-05-29
+> 版本: v6.1.0 | 2026-06-01
 > 所有路径从这里读取，支持环境变量覆盖
 > v6.0: 记忆系统迁移到 Claude Code 原生 .md 格式
 """
@@ -23,12 +23,12 @@ def get_workspace() -> Path:
     """
     获取 jiaolong 工作区根目录
     环境变量: JIAOLONG_WORKSPACE
-    默认: ~/.claude/jiaolong
+    默认: C:/cc/jiaolong-cowork (当前项目)
     """
     env = os.environ.get("JIAOLONG_WORKSPACE")
     if env:
         return Path(env)
-    return get_home() / ".claude" / "jiaolong"
+    return Path("C:/cc/jiaolong-cowork")
 
 
 def get_evolution_dir() -> Path:
@@ -45,9 +45,10 @@ def get_native_memory_dir(cwd: str = None) -> Path:
     """
     获取 Claude Code 原生记忆目录
     v6.0: 记忆系统迁移到原生 .md 格式
+    路径格式: ~/.claude/projects/{C--cc}/memory/
     """
     if not cwd:
-        cwd = os.getcwd()
+        cwd = "C:\\cc"
     project_name = cwd.replace(":\\", "--").replace("\\", "--").replace(":", "--")
     project_name = project_name.rstrip("-")
     return get_home() / ".claude" / "projects" / project_name / "memory"
@@ -72,22 +73,24 @@ def get_experiments_dir() -> Path:
 # 常用文件路径
 # ─────────────────────────────────────────────────────────────────────────────
 
-MEMORY_HOT = property(lambda self: get_memory_dir() / "memory_hot.json")
-
-
+# Legacy paths (v5.x) — deprecated, use native memory system
 def memory_hot_path() -> Path:
+    """DEPRECATED: Use get_native_memory_dir() instead"""
     return get_memory_dir() / "memory_hot.json"
 
 
 def memory_index_path() -> Path:
+    """DEPRECATED: Use get_native_memory_dir() / MEMORY.md instead"""
     return get_memory_dir() / "memory_index.json"
 
 
 def memory_warm_dir() -> Path:
+    """DEPRECATED: Archive not needed with native memory"""
     return get_memory_dir() / "memory_warm"
 
 
 def memory_cold_dir() -> Path:
+    """DEPRECATED: Archive not needed with native memory"""
     return get_memory_dir() / "memory_cold"
 
 
