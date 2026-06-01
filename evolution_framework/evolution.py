@@ -36,6 +36,7 @@ EXPERIMENTS   = EVOLUTION_DIR / "experiments"
 SKILLS_DIR    = EVOLUTION_DIR / "skills"
 AGENTS_FILE   = WORKSPACE / "AGENTS.md"
 MEMORY_FILE   = WORKSPACE / "MEMORY.md"
+SOUL_FILE     = WORKSPACE / "SOUL.md"
 LOG_FILE      = EXPERIMENTS / "experiment_log.md"
 
 # 原生记忆目录
@@ -560,7 +561,7 @@ def status_report() -> str:
 
     # 最近实验
     if LOG_FILE.exists():
-        lines.append("", "== 最近实验 ==")
+        lines.extend(["", "== 最近实验 =="])
         with open(LOG_FILE, "r", encoding="utf-8") as f:
             lines.extend(f.readlines()[-10:])
 

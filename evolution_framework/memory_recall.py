@@ -28,11 +28,23 @@ TYPE_WEIGHTS = {
 
 
 def get_project_memory_dir(cwd: str = None) -> Path:
-    """根据 cwd 推断 Claude Code 项目记忆目录"""
+    """根据 cwd 推断 Claude Code 项目记忆目录
+
+    Claude Code 将记忆存储在 ~/.claude/projects/{project}/memory/
+    其中 project 是 cwd 路径的编码（:→--, \→--）
+    注意: 项目记忆在 workspace 根目录，不是子目录
+    """
     if not cwd:
         cwd = os.getcwd()
-    project_name = cwd.replace(":\\", "--").replace("\\", "--").replace(":", "--")
-    project_name = project_name.rstrip("-")
+    # 尝试从 cwd 向上查找包含 .claude 的 workspace 根目录
+    path = Path(cwd)
+    for parent in [path] + list(path.parents):
+        project_name = str(parent).replace(":\\", "--").replace("\\", "--").replace(":", "--").rstrip("-")
+        memory_dir = CLAUDE_PROJECTS / project_name / "memory"
+        if memory_dir.exists() and any(memory_dir.glob("*.md")):
+            return memory_dir
+    # 回退: 使用 cwd 本身
+    project_name = cwd.replace(":\\", "--").replace("\\", "--").replace(":", "--").rstrip("-")
     return CLAUDE_PROJECTS / project_name / "memory"
 
 

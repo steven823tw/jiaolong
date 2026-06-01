@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import os
-WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", str(Path.home() / ".claude" / "jiaolong")))
+WORKSPACE = Path(os.environ.get("JIAOLONG_WORKSPACE", "C:/cc/jiaolong-cowork"))
 SYS_PROMPT_FILE = WORKSPACE / "AGENTS.md"
 
 

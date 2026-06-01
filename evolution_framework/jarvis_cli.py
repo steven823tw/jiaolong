@@ -19,6 +19,7 @@ jiaolong Jarvis CLI - 一站式助手命令
 """
 from __future__ import annotations
 import sys, json, os
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding='utf-8')
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))

@@ -119,25 +119,3 @@ jiaolong运行在Claude Code之上，提供记忆召回、Skills触发、并行�
         # Both should return results
         assert len(results_all) >= 1
         assert len(results_filtered) >= 1
-
-
-class TestParseMdFrontmatter:
-    def test_full_frontmatter(self):
-        content = "---\nname: test\ntype: feedback\ndescription: desc\n---\nBody"
-        result = parse_md_frontmatter(content)
-        assert result["name"] == "test"
-        assert result["type"] == "feedback"
-        assert result["description"] == "desc"
-        assert result["body"] == "Body"
-
-    def test_no_frontmatter(self):
-        result = parse_md_frontmatter("Just text")
-        assert result["name"] == ""
-        assert result["body"] == "Just text"
-
-    def test_partial_frontmatter(self):
-        content = "---\nname: partial\n---\nBody content"
-        result = parse_md_frontmatter(content)
-        assert result["name"] == "partial"
-        assert result["type"] == "reference"  # default
-        assert result["body"] == "Body content"

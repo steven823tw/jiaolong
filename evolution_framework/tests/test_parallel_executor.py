@@ -139,16 +139,6 @@ class TestExecutorDependencies:
         executor.cancel(tid1)
         tid2 = executor.submit("child", lambda: 1, depends_on=[tid1])
         results = executor.run_all()
-        # Dependent task should not complete when dep is cancelled
-        assert executor.tasks[tid2].status == TaskStatus.WAITING_DEPS
-
-    def test_cancelled_dep_blocks_dependent(self):
-        """被取消的依赖应该阻塞依赖它的任务"""
-        executor = ParallelExecutor(max_workers=2)
-        tid1 = executor.submit("dep", lambda: 42)
-        executor.cancel(tid1)
-        tid2 = executor.submit("child", lambda: 1, depends_on=[tid1])
-        results = executor.run_all()
         assert executor.tasks[tid2].status == TaskStatus.WAITING_DEPS
 
 

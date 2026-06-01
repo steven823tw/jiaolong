@@ -12,6 +12,7 @@ recall Skill - 记忆召回（增强版）
 """
 from __future__ import annotations
 import sys, re
+from pathlib import Path
 from datetime import datetime, timedelta
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -186,14 +187,6 @@ def run(query: str = "", top_k: int = DEFAULT_TOP_K, category: str = None,
         {"success": bool, "query": str, "found": int, "output": str}
     """
     # 如果有原始查询，先解析
-    if raw_query:
-        parsed = parse_query(raw_query)
-        query = query or parsed["query"]
-        top_k = parsed["top_k"]
-        category = category or parsed["category"]
-        time_range = time_range or parsed["time_range"]
-
-    # 解析原始查询
     if raw_query:
         parsed = parse_query(raw_query)
         query = query or parsed["query"]
