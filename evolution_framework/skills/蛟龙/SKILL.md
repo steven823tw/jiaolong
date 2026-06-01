@@ -1,5 +1,5 @@
 ﻿# jiaolong AI 助手框架
-> **版本**: v4.1.0 | **日期**: 2026-04-02
+> **版本**: v6.1.0 | **日期**: 2026-06-01
 > 一套让 AI 助手拥有记忆、自动化和自我进化能力的增强框架
 
 ---
@@ -156,14 +156,16 @@ export MINIMAX_API_KEY=xxx
 export JIAOLONG_WORKSPACE=C:\Users\steve\.claude/jiaolong\workspace
 ```
 
-### 记忆文件
+### 记忆系统 (v6.0.0+ 原生集成)
 
 ```
-workspace/memory/
-├── memory_hot.json      # 热层记忆（当前使用）
-├── memory_warm/         # 温层归档
-└── memory_cold/         # 冷层归档
+~/.claude/projects/{project}/memory/
+├── MEMORY.md                    # 索引文件（每会话自动加载）
+├── *.md                         # 单条记忆（frontmatter + 正文）
+└── metadata.type: user|feedback|project|reference
 ```
+
+记忆已从 `memory_hot.json` 迁移到 Claude Code 原生 `.md` 系统。
 
 ---
 
@@ -172,25 +174,26 @@ workspace/memory/
 ```
 Claude Code Cowork
     │
-    ├──┬─ Hooks (message:preprocessed)
-    │       ├── jiaolong-memory        → 记忆召回注入
-    │       └── jiaolong-skill-trigger → Skills自动触发
+    ├──┬─ Native Memory (v6.0.0+)
+    │       ├── ~/.claude/projects/{project}/memory/*.md
+    │       ├── MEMORY.md 索引 (每会话加载)
+    │       └── metadata.type: user|feedback|project|reference
     │
-    ├──┬─ Skills Layer
-    │       └── 14个Skills（recall/evolve/monitor/...）
+    ├──┬─ Hooks (settings.json)
+    │       ├── extract-hook → 对话结束 → 自动提取记忆
+    │       └── recall-hook  → 对话开始 → 注入相关记忆
     │
-    ├──┬─ Core Modules
-    │       ├── memory_recall.py       → 语义召回
-    │       ├── skill_trigger.py       → 触发引擎
-    │       ├── parallel_executor.py   → 并行执行
-    │       ├── rules_engine.py        → 代码规则
-    │       ├── llm_core.py            → LLM能力
-    │       └── memory_evolution.py    → 记忆演进
+    ├──┬─ Skills Layer (14个)
+    │       ├── recall / remember / evolve / research
+    │       ├── monitor / simplify / dream / status_report
+    │       ├── team_analyze / extract_memories / tool_builder
+    │       └── experiment_logger / quant_screen / auto_decompose
     │
-    └──┬─ Services
-            ├── compact.py    → Context压缩
-            └── daemon.py     → 后台守护
-```
+    └──┬─ Core Modules
+            ├── cowork_integration.py  → 集成核心
+            ├── parallel_executor.py   → 并行执行
+            ├── rules_engine.py        → 代码规则
+            └── llm_core.py            → LLM能力
 
 ---
 
@@ -228,6 +231,7 @@ MIT License - 开源共享
 jiaolong由 steve 创建，基于 Claude Code 差距分析持续进化。
 
 - **项目**: jiaolong AI 助手框架
-- **版本**: v4.1.0
-- **日期**: 2026-04-02
+- **版本**: v6.1.0
+- **日期**: 2026-06-01
 - **定位**: Claude Code Cowork 的能力放大器
+- **进化**: 11 个实验全部 RETAINED，原生记忆集成，V3.2 代码审查实战验证

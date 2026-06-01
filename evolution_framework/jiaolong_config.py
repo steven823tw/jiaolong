@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 jiaolong 统一配置模块 (cowork 适配版)
-> 版本: v5.0.0 | 2026-04-30
+> 版本: v6.0.0 | 2026-05-29
 > 所有路径从这里读取，支持环境变量覆盖
+> v6.0: 记忆系统迁移到 Claude Code 原生 .md 格式
 """
 from __future__ import annotations
 import os
@@ -36,8 +37,20 @@ def get_evolution_dir() -> Path:
 
 
 def get_memory_dir() -> Path:
-    """获取记忆存储目录"""
+    """获取记忆存储目录 (legacy: memory_hot.json)"""
     return get_workspace() / "memory"
+
+
+def get_native_memory_dir(cwd: str = None) -> Path:
+    """
+    获取 Claude Code 原生记忆目录
+    v6.0: 记忆系统迁移到原生 .md 格式
+    """
+    if not cwd:
+        cwd = os.getcwd()
+    project_name = cwd.replace(":\\", "--").replace("\\", "--").replace(":", "--")
+    project_name = project_name.rstrip("-")
+    return get_home() / ".claude" / "projects" / project_name / "memory"
 
 
 def get_skills_dir() -> Path:
@@ -118,11 +131,10 @@ WORKSPACE = get_workspace()
 
 
 if __name__ == "__main__":
-    print(f"Workspace:    {get_workspace()}")
-    print(f"Evolution:    {get_evolution_dir()}")
-    print(f"Memory:       {get_memory_dir()}")
-    print(f"Skills:       {get_skills_dir()}")
-    print(f"Memory Hot:   {memory_hot_path()}")
+    print(f"Workspace:        {get_workspace()}")
+    print(f"Evolution:        {get_evolution_dir()}")
+    print(f"Memory (legacy):  {get_memory_dir()}")
+    print(f"Memory (native):  {get_native_memory_dir()}")
+    print(f"Skills:           {get_skills_dir()}")
     ensure_dirs()
-    init_memory()
     print("\n✅ 所有目录已初始化")
