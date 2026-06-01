@@ -1,1 +1,8 @@
 fix_paths.py
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.env
+.DS_Store
+Thumbs.db
