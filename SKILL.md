@@ -113,8 +113,8 @@ jiaolong/
 │   ├── SKILL.md
 │   └── BRIEFING.md
 │
-└── memory/                   ← 记忆存储
-    └── memory_hot.json
+└── ~/.claude/projects/C--cc/memory/  ← 原生记忆存储 (.md)
+    └── *.md
 ```
 
 ---

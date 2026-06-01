@@ -24,9 +24,9 @@
 ## 实验流程
 
 ### Step 1: 读取现状
-- 阅读 `memory/memory_hot.json`（当前热记忆）
+- 阅读 `~/.claude/projects/C--cc/memory/*.md`（原生记忆系统）
 - 阅读 `workspace/AGENTS.md`（当前能力定义）
-- 阅读 `workspace/MEMORY.md`（长期记忆）
+- 阅读 `workspace/MEMORY.md`（长期记忆索引）
 - 调取最近 N 次会话的 `sessions_history`
 
 ### Step 2: 提出改进假设
@@ -101,7 +101,7 @@ EXP-YYYYMMDD-NNN/
 **参考**: Claude Code `extractMemories/`
 - 每次对话结束自动判断是否需要提取记忆
 - LLM 从对话中自动提取关键事实
-- 自动写入 `memory_hot.json`
+- 自动写入原生 `.md` 记忆文件
 - **目标**: 记忆人工维护 < 10%
 
 ### P1: 工具系统深度化

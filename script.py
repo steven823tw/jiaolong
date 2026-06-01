@@ -43,12 +43,10 @@ def _status() -> Dict[str, Any]:
         from cowork_integration import jiaolong
 
         s = jiaolong.status()
-        hot_file = Path(__file__).parent.parent.parent / "memory" / "memory_hot.json"
+        memory_dir = Path.home() / ".claude" / "projects" / "C--cc" / "memory"
         memory_count = 0
-        if hot_file.exists():
-            data = json.loads(hot_file.read_text(encoding="utf-8"))
-            facts = data if isinstance(data, list) else data.get("facts", [])
-            memory_count = len(facts)
+        if memory_dir.exists():
+            memory_count = len([f for f in memory_dir.glob("*.md") if f.name != "MEMORY.md"])
 
         from evolution_framework.jarvis_daemon import load_config
         cfg = load_config()

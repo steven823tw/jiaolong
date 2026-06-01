@@ -179,7 +179,7 @@ Claude Code Cowork
 |------|------|
 | `Module not found` | 确保 `evolution_framework/` 在 workspace 根目录 |
 | Hook 不生效 | 检查 `Claude Code hooks` 中 `hooks.internal.enabled: true` |
-| 记忆召回返回空 | 检查 `memory/memory_hot.json` 是否存在 |
+| 记忆召回返回空 | 检查 `~/.claude/projects/C--cc/memory/` 是否有 .md 文件 |
 | Daemon 无法启动 | 用 `python jarvis_daemon.py test` 测试 |
 
 ---

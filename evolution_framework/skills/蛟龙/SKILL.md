@@ -1,237 +1,67 @@
-﻿# jiaolong AI 助手框架
+# jiaolong AI 助手框架
 > **版本**: v6.1.0 | **日期**: 2026-06-01
-> 一套让 AI 助手拥有记忆、自动化和自我进化能力的增强框架
+> Claude Code 的能力放大器 — 记忆召回 + Skills 触发 + 并行执行 + 代码规则
 
----
-
-## jiaolong是什么？
-
-jiaolong是运行在 Claude Code Cowork 之上的** AI 增强框架**，为 Claude Code Cowork 添加了：
+## 核心能力
 
 | 能力 | 说明 |
 |------|------|
-| 🧠 **语义记忆召回** | 每次对话自动注入相关历史记忆 |
-| ⚡ **Skills自动触发** | 关键词自动识别并执行对应技能 |
-| 🔄 **并行任务执行** | 多任务同时执行，效率提升60%+ |
-| 📋 **代码规则引擎** | 集成 clean-code 标准的自动检查 |
-| 🤖 **LLM能力层** | 对话压缩 / 任务分解 / 记忆提取 |
-| 🔄 **智能记忆演进** | 三层存储自动升降级 |
-| ⏰ **Daemon守护服务** | 定时任务 + 进程管理 |
-
----
-
-## 安装
-
-### 前置要求
-
-- Python 3.8+
-- Claude Code Cowork 已安装并运行
-- （可选）OpenAI / Anthropic / MiniMax API Key（用于LLM功能）
-
-### 步骤
-
-```bash
-# 1. 克隆或复制整个 evolution_framework 目录到你的 Claude Code Cowork workspace
-# 确保目录结构如下：
-# workspace/
-# └── evolution_framework/
-#     ├── cowork_integration.py
-#     ├── skill_trigger.py
-#     ├── memory_recall.py
-#     ├── parallel_executor.py
-#     ├── rules_engine.py
-#     ├── jarvis_cli.py
-#     ├── jarvis_daemon.py
-#     ├── skill_output.py
-#     ├── llm_core.py
-#     ├── context_compressor.py
-#     ├── task_decomposer.py
-#     ├── memory_evolution.py
-#     ├── coordinator/
-#     ├── services/
-#     └── skills/
-
-# 2. 启用 Claude Code Cowork Hooks（在 Claude Code hooks 中配置）
-# 找到 hooks.internal.load.workspaceDir 指向 hooks/ 目录
-
-# 3. 验证安装
-python evolution_framework/jarvis_cli.py status
-```
-
----
-
-## 快速开始
-
-### 1. 记忆召回
-```
-/recall jiaolong              → 召回jiaolong相关记忆
-/recent 5                 → 最近5条记忆
-/recall category=project  → 按类别筛选
-```
-
-### 2. Skills自动触发
-```
-"帮我选股"   → 自动触发 quant_screen
-"开始进化"   → 自动触发 evolve
-"/monitor"  → 自动触发 monitor
-```
-
-### 3. 并行执行
-```python
-from evolution_framework import jiaolong
-
-jiaolong.parallel_submit("搜集数据", "parallel_search",
-                         {"query": "jiaolong"}, agent="intel")
-jiaolong.parallel_run_all()  # 3任务并行执行
-```
-
-### 4. 代码规则检查
-```python
-from evolution_framework import jiaolong
-
-# 手动检查
-result = jiaolong.check_content_rules(code, "my_file.py")
-# 返回违规列表和修复建议
-```
-
-### 5. Daemon守护
-```bash
-python evolution_framework/jarvis_daemon.py status   # 查看状态
-python evolution_framework/jarvis_daemon.py install   # 安装开机自启
-python evolution_framework/jarvis_daemon.py run       # 前台运行
-```
-
----
-
-## 核心模块
-
-| 模块 | 版本 | 说明 |
-|------|------|------|
-| `cowork_integration.py` | v1.1 | 集成核心，统一接口 |
-| `skill_trigger.py` | v1.0 | Skills自动触发引擎 |
-| `memory_recall.py` | v1.0 | 语义记忆召回 |
-| `parallel_executor.py` | v2.0 | 任务依赖链并行 |
-| `rules_engine.py` | v2.0 | clean-code规则检查 |
-| `jarvis_cli.py` | v1.0 | 命令行工具 |
-| `jarvis_daemon.py` | v1.0 | 定时守护服务 |
-| `skill_output.py` | v1.0 | 统一输出格式化 |
-| `llm_core.py` | v1.0 | 多Provider LLM管理 |
-| `context_compressor.py` | v1.0 | LLM对话压缩 |
-| `task_decomposer.py` | v1.0 | LLM任务分解 |
-| `memory_evolution.py` | v1.0 | 三层记忆演进 |
-
----
-
-## Skills 列表
-
-| Skill | 触发词 | 功能 |
-|-------|--------|------|
-| `recall` | /recall, 查一下记忆 | 记忆召回 |
-| `remember` | /remember | 记忆检查 |
-| `monitor` | /monitor | 主动监控 |
-| `evolve` | /evolve, 开始进化 | 自进化实验 |
-| `research` | /research, 分析 | 深度研究 |
-| `simplify` | /simplify, 简化 | 任务简化 |
-| `quant_screen` | /quant_screen, 选股 | 量化选股 |
-| `dream` | /dream, 整合记忆 | 记忆整理 |
-| `status_report` | /status_report | 状态报告 |
-| `team_analyze` | /team_analyze | 多Agent协作 |
-| `extract_memories` | /extract_memories | 记忆提取 |
-| `tool_builder` | /tool_builder | 工具构建 |
-| `experiment_logger` | /log_experiment | 实验记录 |
-
----
-
-## 配置
-
-### 环境变量（可选）
-
-```bash
-# LLM API Keys（用于LLM能力层）
-export OPENAI_API_KEY=sk-xxx
-export ANTHROPIC_API_KEY=sk-ant-xxx
-export MINIMAX_API_KEY=xxx
-
-# Workspace路径（一般不需要改）
-export JIAOLONG_WORKSPACE=C:\Users\steve\.claude/jiaolong\workspace
-```
-
-### 记忆系统 (v6.0.0+ 原生集成)
-
-```
-~/.claude/projects/{project}/memory/
-├── MEMORY.md                    # 索引文件（每会话自动加载）
-├── *.md                         # 单条记忆（frontmatter + 正文）
-└── metadata.type: user|feedback|project|reference
-```
-
-记忆已从 `memory_hot.json` 迁移到 Claude Code 原生 `.md` 系统。
-
----
+| 🧠 **语义记忆召回** | 从原生 `.md` 记忆系统自动注入相关历史 |
+| ⚡ **Skills 自动触发** | 关键词识别 → 自动执行 16 个 Skills |
+| 🔄 **并行任务执行** | ThreadPoolExecutor + 依赖链 |
+| 📋 **代码规则引擎** | 8 条 clean-code 规则自动检查 |
+| 🔍 **博弈审查** | 对抗性代码审查方法论 |
 
 ## 架构
 
 ```
-Claude Code Cowork
-    │
-    ├──┬─ Native Memory (v6.0.0+)
-    │       ├── ~/.claude/projects/{project}/memory/*.md
-    │       ├── MEMORY.md 索引 (每会话加载)
-    │       └── metadata.type: user|feedback|project|reference
-    │
-    ├──┬─ Hooks (settings.json)
-    │       ├── extract-hook → 对话结束 → 自动提取记忆
-    │       └── recall-hook  → 对话开始 → 注入相关记忆
-    │
-    ├──┬─ Skills Layer (14个)
-    │       ├── recall / remember / evolve / research
-    │       ├── monitor / simplify / dream / status_report
-    │       ├── team_analyze / extract_memories / tool_builder
-    │       └── experiment_logger / quant_screen / auto_decompose
-    │
-    └──┬─ Core Modules
-            ├── cowork_integration.py  → 集成核心
-            ├── parallel_executor.py   → 并行执行
-            ├── rules_engine.py        → 代码规则
-            └── llm_core.py            → LLM能力
+Claude Code
+    ├── Native Memory (~/.claude/projects/C--cc/memory/*.md)
+    ├── Hooks (extract-hook + recall-hook)
+    ├── Skills Layer (16 个)
+    │     ├── recall / remember / evolve / research
+    │     ├── monitor / simplify / dream / status_report
+    │     ├── code_review_debate / extract_memories
+    │     └── team_analyze / tool_builder / experiment_logger
+    └── Core Modules
+          ├── memory_recall.py    → 原生 .md 记忆召回
+          ├── skill_trigger.py    → 关键词触发引擎
+          ├── parallel_executor.py → 并行执行 + 依赖链
+          ├── rules_engine.py     → Python 代码规则检查
+          └── cowork_integration.py → 集成 Facade
+```
 
----
+## 快速使用
 
-## 与 Claude Code Cowork 原生的关系
+```
+/recall jiaolong          → 召回相关记忆
+/remember                 → 检查记忆状态
+/monitor                  → 系统状态检查
+/review report.html       → 博弈式代码审查
+"开始进化"                 → 触发进化实验
+```
 
-jiaolong**不是**替代 Claude Code Cowork，而是**放大** Claude Code Cowork 的能力：
+## 记忆系统 (v6.0+)
 
-| 维度 | Claude Code Cowork原生 | +jiaolong后 |
-|------|------------|---------|
-| 记忆 | Session级 | 长期+语义搜索 |
-| Skills | 手动触发 | 关键词自动触发 |
-| 任务执行 | 串行 | 多线程并行 |
-| 代码质量 | 无 | clean-code标准自动检查 |
-| 后台任务 | 无 | 定时调度+Daemon |
+记忆存储在 Claude Code 原生 `.md` 格式：
+```
+~/.claude/projects/C--cc/memory/
+├── MEMORY.md              # 索引
+└── *.md                   # 单条记忆 (frontmatter + 正文)
+    ├── name: 记忆名称
+    ├── type: user|feedback|project|reference
+    └── description: 描述
+```
 
----
+## 依赖
 
-## 局限性
-
-- `before_tool_call` Hook 需要 Claude Code Cowork Plugin API
-- 真实多Agent subagent 受 Claude Code Cowork 平台限制
-- LLM功能需要配置 API Key
-- 部分 Skills 为 stub 状态（功能待完善）
-
----
-
-## 许可证
-
-MIT License - 开源共享
-
----
+- Python 3.12+
+- Claude Code (原生记忆 + Hooks)
+- （可选）OpenAI / Anthropic API Key
 
 ## 来源
 
-jiaolong由 steve 创建，基于 Claude Code 差距分析持续进化。
-
-- **项目**: jiaolong AI 助手框架
 - **版本**: v6.1.0
-- **日期**: 2026-06-01
-- **定位**: Claude Code Cowork 的能力放大器
-- **进化**: 11 个实验全部 RETAINED，原生记忆集成，V3.2 代码审查实战验证
+- **测试**: 97 tests passing
+- **实验**: 12 个 (全部 RETAINED)
+- **定位**: Claude Code 的能力放大器，不是替代品

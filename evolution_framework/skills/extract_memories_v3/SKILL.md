@@ -9,7 +9,7 @@
 
 ## 功能
 
-从当前会话中自动提取值得记忆的事实，写入 `memory/memory_hot.json`。
+从当前会话中自动提取值得记忆的事实，写入原生 `.md` 记忆文件（`~/.claude/projects/C--cc/memory/`）。
 
 ### 核心技术
 
@@ -66,9 +66,9 @@ report = run_extract(conversation_text, dry_run=False)
 
 ## 与OMLX的关系
 
-- 使用 `MemorySwapManager().hot` 读取当前热记忆（结构一致）
-- 写入 `memory_hot.json`（与OMLX共享同一文件）
-- 不依赖OMLX的 `add_fact`（直接读写文件）
+- 使用原生 `.md` 记忆系统读写记忆
+- 写入 `~/.claude/projects/C--cc/memory/*.md`
+- 通过 frontmatter 格式存储结构化数据
 
 ## AutoResearch实验验证
 

@@ -16,7 +16,7 @@
   },
   "observations": {
     "native_memory_count_note": "原生记忆系统活跃，MEMORY.md 索引正常",
-    "dual_track_eliminated_note": "memory_hot.json 已弃用，hooks 写入原生 .md",
+    "dual_track_eliminated_note": "memory_hot.json 已完全移除，所有引用已更新为原生 .md",
     "hooks_native_integrated_note": "extract + recall 双 hook 已部署到 settings.json",
     "experiments_completed_note": "EXP-001 复盘 + EXP-002 集成方案 + EXP-003 hooks 部署"
   }

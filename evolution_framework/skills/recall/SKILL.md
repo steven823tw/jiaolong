@@ -47,7 +47,7 @@
 ## 依赖
 
 - `evolution_framework/memory_recall.py` - 核心召回引擎
-- `memory/memory_hot.json` - 热层记忆存储
+- `~/.claude/projects/C--cc/memory/*.md` - 原生记忆存储
 
 ## 输出格式
 

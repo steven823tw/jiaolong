@@ -10,10 +10,10 @@
 - `query`: 查询关键词 (类型: str)
 
 ## 执行步骤
-1. 1. 搜索memory_hot.json
-2. 2. 检查OMLX温冷层
-3. 3. 汇总相关事实
-4. 4. 提供上下文
+1. 搜索原生记忆 (`~/.claude/projects/C--cc/memory/*.md`)
+2. 关键词匹配 + 类型权重
+3. 汇总相关事实
+4. 提供上下文
 
 ## 示例
 - `/remember jiaolong` → 返回jiaolong集团相关记忆
