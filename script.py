@@ -48,23 +48,19 @@ def _status() -> Dict[str, Any]:
         if memory_dir.exists():
             memory_count = len([f for f in memory_dir.glob("*.md") if f.name != "MEMORY.md"])
 
-        from evolution_framework.jarvis_daemon import load_config
-        cfg = load_config()
-
         output = f"""
-## jiaolong框架 v4.1.0 状态
+## jiaolong框架 v6.1.0 状态
 
 **记忆召回**: {'✅ 启用' if s['recall_enabled'] else '❌ 禁用'}
 **Skills触发**: {'✅ 启用' if s['skill_trigger_enabled'] else '❌ 禁用'}
 **代码规则**: {'✅ 启用' if s['rules_enabled'] else '❌ 禁用'}
 
 **可用Skills**: {s['skills_count']}个
-**记忆存储**: {memory_count}条
-**Daemon任务**: {len(cfg.get('tasks', []))}个
+**记忆存储**: {memory_count}条 (原生 .md)
 
 ---
 使用 `/recall <关键词>` 测试记忆召回
-使用 `/jiaolong info` 查看详细信息
+使用 `/review report.html` 博弈审查
 """
         return {"success": True, "output": output}
     except Exception as e:
@@ -111,18 +107,13 @@ def _modules() -> Dict[str, Any]:
     modules = [
         ("cowork_integration", "v5.0", "Cowork集成核心，统一接口"),
         ("skill_trigger", "v1.0", "Skills自动触发引擎"),
-        ("memory_recall", "v1.0", "语义记忆召回"),
-        ("parallel_executor", "v2.0", "任务依赖链并行"),
-        ("rules_engine", "v2.0", "clean-code规则检查"),
-        ("jarvis_cli", "v1.0", "命令行工具"),
-        ("jarvis_daemon", "v1.0", "定时守护服务"),
-        ("skill_output", "v1.0", "统一输出格式化"),
-        ("llm_core", "v1.0", "多Provider LLM管理"),
-        ("context_compressor", "v1.0", "LLM对话压缩"),
-        ("task_decomposer", "v1.0", "LLM任务分解"),
-        ("memory_evolution", "v1.0", "三层记忆演进"),
+        ("memory_recall", "v6.1.0", "原生 .md 记忆召回"),
+        ("parallel_executor", "v6.1.0", "任务依赖链并行"),
+        ("rules_engine", "v6.1.0", "Python 代码规则检查 (8条)"),
+        ("skill_output", "v6.1.0", "统一输出格式化"),
+        ("llm_core", "v6.1.0", "多Provider LLM管理"),
     ]
-    output = "## 核心模块 (14个)\n\n"
+    output = "## 核心模块 (8个)\n\n"
     for name, ver, desc in modules:
         output += f"- **{name}** ({ver}) — {desc}\n"
     return {"success": True, "output": output}
@@ -150,7 +141,7 @@ def _skills_list() -> Dict[str, Any]:
 
 def _help_text() -> str:
     return """
-## jiaolong框架 v4.1.0
+## jiaolong框架 v6.1.0
 
 **用法**: /jiaolong <command>
 

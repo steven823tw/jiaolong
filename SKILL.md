@@ -1,4 +1,4 @@
-﻿# jiaolong AI 助手框架 v4.1.0
+﻿# jiaolong AI 助手框架 v6.1.0
 
 > **让 AI 助手拥有记忆、自动化和自我进化能力**
 
@@ -93,20 +93,16 @@ python evolution_framework/jarvis_cli.py check your_file.py  # 代码规则
 ```
 jiaolong/
 ├── evolution_framework/
-│   ├── cowork_integration  ← 集成核心
-│   ├── skill_trigger         ← 自动触发引擎
-│   ├── memory_recall         ← 语义召回
-│   ├── parallel_executor     ← 并行执行
-│   ├── rules_engine          ← clean-code规则
-│   ├── jarvis_cli           ← 命令行
-│   ├── jarvis_daemon        ← 守护服务
-│   ├── llm_core            ← LLM管理
-│   ├── context_compressor    ← 对话压缩
-│   ├── task_decomposer       ← 任务分解
-│   ├── memory_evolution      ← 记忆演进
-│   ├── coordinator/           ← 协调器
-│   ├── services/            ← compact + daemon
-│   └── skills/              ← 13个Skills
+│   ├── cowork_integration  ← 集成 Facade
+│   ├── skill_trigger         ← 关键词触发引擎
+│   ├── memory_recall         ← 原生 .md 记忆召回
+│   ├── parallel_executor     ← 并行执行 + 依赖链
+│   ├── rules_engine          ← Python 代码规则 (8条)
+│   ├── skill_output          ← 统一输出格式化
+│   ├── llm_core              ← 多 Provider LLM
+│   ├── evolution.py          ← 进化循环 + 实验日志
+│   ├── coordinator/          ← 协调器
+│   └── skills/               ← 16 个 Skills
 │
 ├── skills/                   ← 入口Skill
 │   ├── script.py
@@ -129,9 +125,10 @@ jiaolong/
 
 ## 版本
 
-- **版本**: v4.1.0
-- **日期**: 2026-04-02
-- **测试**: 97/97 项全部通过
+- **版本**: v6.1.0
+- **日期**: 2026-06-01
+- **测试**: 97 passed, 0 failed
+- **Skills**: 16 个
 
 ---
 

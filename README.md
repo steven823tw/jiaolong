@@ -1,204 +1,101 @@
-﻿# jiaolong AI 助手框架 — 安装与使用指南
+# jiaolong AI 助手框架
 
-> 版本 v4.1.0 | 2026-04-02
+> **版本**: v6.1.0 | **日期**: 2026-06-01
+> Claude Code 的能力放大器 — 记忆召回 + Skills 触发 + 并行执行 + 代码规则
 
----
+## 核心能力
+
+| 能力 | 说明 |
+|------|------|
+| 🧠 **语义记忆召回** | 从原生 `.md` 记忆系统自动注入相关历史 |
+| ⚡ **Skills 自动触发** | 关键词识别 → 自动执行 16 个 Skills |
+| 🔄 **并行任务执行** | ThreadPoolExecutor + 依赖链 |
+| 📋 **代码规则引擎** | 8 条 clean-code 规则自动检查 |
+| 🔍 **博弈审查** | 对抗性代码审查方法论 |
 
 ## 安装
 
 ### 前置要求
 
-- Python 3.8+
-- Claude Code Cowork 已安装并运行
+- Python 3.12+
+- Claude Code (原生记忆 + Hooks)
 
-### 步骤 1：复制框架文件
-
-将 `evolution_framework/` 整个目录复制到你的 Claude Code Cowork workspace：
-
-```
-your-workspace/
-└── evolution_framework/
-    ├── cowork_integration.py  (核心集成)
-    ├── skill_trigger.py         (Skills自动触发)
-    ├── memory_recall.py         (记忆召回)
-    ├── parallel_executor.py      (并行执行)
-    ├── rules_engine.py          (代码规则)
-    ├── jarvis_cli.py           (命令行)
-    ├── jarvis_daemon.py        (守护服务)
-    ├── skill_output.py         (输出格式化)
-    ├── llm_core.py             (LLM管理)
-    ├── context_compressor.py   (对话压缩)
-    ├── task_decomposer.py      (任务分解)
-    ├── memory_evolution.py     (记忆演进)
-    ├── coordinator/            (协调器)
-    ├── services/              (compact + daemon)
-    └── skills/                 (13个Skills)
-```
-
-### 步骤 2：启用 Claude Code Cowork Hooks
-
-在 `Claude Code hooks` 中添加：
-
-```json
-{
-  "hooks": {
-    "internal": {
-      "enabled": true,
-      "load": {
-        "workspaceDir": "path/to/your/workspace/hooks"
-      }
-    }
-  }
-}
-```
-
-将 `hooks/` 目录（包含 `jiaolong-memory/` 和 `jiaolong-skill-trigger/`）复制到 workspace。
-
-### 步骤 3：验证安装
+### 步骤
 
 ```bash
-cd your-workspace
-python evolution_framework/jarvis_cli.py status
+# 1. 克隆仓库
+git clone https://github.com/steven823tw/jiaolong.git
+cd jiaolong
+
+# 2. 验证
+cd evolution_framework && python -m pytest tests/ -q
 ```
-
-应该看到：
-```
-jiaolong框架状态: 运行中
-Skills数量: 14
-记忆召回: 启用
-```
-
----
-
-## 使用
-
-### 命令行
-
-```bash
-# 查看状态
-python evolution_framework/jarvis_cli.py status
-
-# 记忆召回
-python evolution_framework/jarvis_cli.py recall jiaolong
-python evolution_framework/jarvis_cli.py recall 量化
-
-# 查看Skills
-python evolution_framework/jarvis_cli.py skills
-
-# 查看Agent角色
-python evolution_framework/jarvis_cli.py agents
-
-# 代码规则检查
-python evolution_framework/jarvis_cli.py check your_file.py
-```
-
-### 在对话中使用
-
-```
-/recall jiaolong              → 召回jiaolong相关记忆
-/recent 5               → 最近5条记忆
-/recall category=project → 按类别筛选
-
-/jiaolong status            → 框架状态
-/jiaolong info             → 详细信息
-/jiaolong modules           → 核心模块
-/jiaolong skills            → Skills列表
-```
-
-### Skills 自动触发
-
-在对话中直接说：
-
-| 说 | 触发 |
-|---|------|
-| "帮我选股" | quant_screen |
-| "开始进化" | evolve |
-| "/monitor" | monitor |
-| "记得jiaolong是什么" | recall |
-
----
-
-## 配置
-
-### 可选：API Keys（用于 LLM 能力）
-
-```bash
-# Linux/Mac
-export OPENAI_API_KEY=sk-xxx
-export ANTHROPIC_API_KEY=sk-ant-xxx
-
-# Windows (PowerShell)
-$env:OPENAI_API_KEY="sk-xxx"
-$env:ANTHROPIC_API_KEY="sk-ant-xxx"
-```
-
-### Daemon 守护
-
-```bash
-# 安装开机自启（Windows Task Scheduler）
-python evolution_framework/jarvis_daemon.py install
-
-# 查看状态
-python evolution_framework/jarvis_daemon.py status
-
-# 前台运行
-python evolution_framework/jarvis_daemon.py run
-
-# 卸载
-python evolution_framework/jarvis_daemon.py uninstall
-```
-
----
 
 ## 架构
 
 ```
-Claude Code Cowork
-  ├── Hooks
-  │     ├── jiaolong-memory         → 记忆召回注入
-  │     └── jiaolong-skill-trigger   → Skills自动触发
-  │
-  ├── Core Modules (Python)
-  │     ├── cowork_integration     → 统一入口
-  │     ├── memory_recall           → 语义召回
-  │     ├── skill_trigger           → 触发引擎
-  │     ├── parallel_executor        → 并行执行
-  │     ├── rules_engine             → clean-code规则
-  │     └── llm_core                 → LLM能力
-  │
-  └── Services
-        ├── compact.py              → Context压缩
-        └── daemon.py               → 定时守护
+Claude Code
+    ├── Native Memory (~/.claude/projects/C--cc/memory/*.md)
+    ├── Hooks (extract-hook + recall-hook)
+    ├── Skills Layer (16 个)
+    │     ├── recall / remember / evolve / research
+    │     ├── monitor / simplify / dream / status_report
+    │     ├── code_review_debate / extract_memories
+    │     └── team_analyze / tool_builder / experiment_logger
+    └── Core Modules
+          ├── memory_recall.py    → 原生 .md 记忆召回
+          ├── skill_trigger.py    → 关键词触发引擎
+          ├── parallel_executor.py → 并行执行 + 依赖链
+          ├── rules_engine.py     → Python 代码规则检查
+          └── cowork_integration.py → 集成 Facade
 ```
 
----
+## 使用
+
+### Skills 触发
+
+```
+/recall jiaolong          → 召回相关记忆
+/remember                 → 检查记忆状态
+/monitor                  → 系统状态检查
+/review report.html       → 博弈式代码审查
+"开始进化"                 → 触发进化实验
+```
+
+### 记忆系统
+
+记忆存储在 Claude Code 原生 `.md` 格式：
+
+```
+~/.claude/projects/C--cc/memory/
+├── MEMORY.md              # 索引
+└── *.md                   # 单条记忆 (frontmatter + 正文)
+    ├── name: 记忆名称
+    ├── type: user|feedback|project|reference
+    └── description: 描述
+```
+
+## 测试
+
+```bash
+cd evolution_framework
+python -m pytest tests/ -v
+
+# 结果: 97 passed, 0 failed
+```
 
 ## 故障排除
 
 | 问题 | 解决 |
 |------|------|
-| `Module not found` | 确保 `evolution_framework/` 在 workspace 根目录 |
-| Hook 不生效 | 检查 `Claude Code hooks` 中 `hooks.internal.enabled: true` |
+| `Module not found` | 确保在 `jiaolong-cowork/` 目录下运行 |
 | 记忆召回返回空 | 检查 `~/.claude/projects/C--cc/memory/` 是否有 .md 文件 |
-| Daemon 无法启动 | 用 `python jarvis_daemon.py test` 测试 |
+| 技能触发无响应 | 检查 `skills_index.json` 路径是否正确 |
 
----
+## 版本信息
 
-## 发布信息
-
-- **版本**: v4.1.0
-- **日期**: 2026-04-02
-- **测试**: 97/97 项全部通过
+- **版本**: v6.1.0
+- **测试**: 97 tests passing
+- **Skills**: 16 个
+- **实验**: 12 个 (全部 RETAINED)
 - **许可证**: MIT
-
----
-
-## 获取更新
-
-```bash
-# 如果通过 git 管理
-git pull
-
-# 重新运行验证
-python evolution_framework/jarvis_cli.py status
-```
